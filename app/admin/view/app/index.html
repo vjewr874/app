@@ -1,0 +1,243 @@
+<title>{$site.title} - {$site.name}</title>
+<div class="layui-fluid" id="VIEW-list-table">
+    <div class="layui-row layui-col-space10">
+        <div class="layui-col-md10">
+            <div class="layui-card">
+                <div class="layui-card-body nepadmin-table-full layer-event">
+                    <table id="app-list-table" lay-filter="app-list-table"></table>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md2">
+            <div class="layui-card">
+                <div class="layui-card-header">筛选数据</div>
+                <div class="layui-card-body">
+                    <form class="layui-row layui-col-space10 layui-form table-reload-btn">
+                        <div class="layui-col-md12 layui-col-xs6">
+                            <input type="text" class="layui-input" id="so-name" placeholder="应用名称">
+                        </div>
+                        <div class="layui-col-md12 layui-col-xs6">
+                            <input type="text" class="layui-input" id="so-author" placeholder="作者名称">
+                        </div>
+                        <div class="layui-col-md12 layui-col-xs6">
+                            <input type="text" class="layui-input" id="so-teamName" placeholder="团队名称">
+                        </div>
+                        <div class="layui-col-md12 layui-col-xs6">
+                            <input type="text" class="layui-input" id="so-qq" placeholder="客服QQ">
+                        </div>
+                        <div class="layui-col-md12 layui-col-xs6">
+                            <select id="so-status">
+                                <option value="">启用状态</option>
+                                <option value="0">关闭</option>
+                                <option value="1">启用</option>
+                            </select>
+                        </div>
+                        <div class="layui-col-md12 layui-col-xs12">
+                            <div class="layui-row layui-col-space10">
+                                <div class="layui-col-xs6">
+                                    <div class="layui-btn layui-btn-sm layui-btn-fluid" lay-active="reload">筛选</div>
+                                </div>
+                                <div class="layui-col-xs6">
+                                    <button type="reset"
+                                            class="layui-btn layui-btn-sm layui-btn-fluid layui-btn-primary">
+                                        重置
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+<!--            <div class="layui-card nepadmin-font-12">-->
+            <!--                <div class="layui-card-header">-->
+            <!--                    <i class="layui-icon">&#xe78c;</i> 帮助中心-->
+            <!--                </div>-->
+            <!--                <div class="layui-card-body">-->
+            <!--                    <p>商品在出售中列表找不到？</p>-->
+            <!--                    <p class="nepadmin-c-gray">商品售罄库存为0，在已售罄列表中，提醒您该添加库存了。待付款订单也会占据库存，其超时关闭后库存才会释放。</p>-->
+            <!--                    <hr/>-->
+            <!--                    <p>-->
+            <!--                        <a>如何新建／发布商品？</a>-->
+            <!--                    </p>-->
+            <!--                    <p>-->
+            <!--                        <a>如何管理商品？</a>-->
+            <!--                    </p>-->
+            <!--                    <p>-->
+            <!--                        <a>商品如何排序？</a>-->
+            <!--                    </p>-->
+            <!--                    <p>-->
+            <!--                        <a>商品销量找不到对应的订单？</a>-->
+            <!--                    </p>-->
+            <!--                    <p>-->
+            <!--                        <a>商品二维码使用说明</a>-->
+            <!--                    </p>-->
+            <!--                    <p>-->
+            <!--                        <a>商品可以设置用积分兑换吗？</a>-->
+            <!--                    </p>-->
+            <!--                </div>-->
+            <!--            </div>-->
+
+        </div>
+    </div>
+</div>
+<script type="text/html" id="app-list-toolbar">
+    <div class="layui-btn-container">
+        <div class="layui-btn layui-btn-sm" lay-event="create">创建应用</div>
+        <div class="layui-btn layui-btn-sm layui-btn-primary" lay-event="del">删除</div>
+        <div class="layui-btn layui-btn-sm layui-btn-primary">
+            <i class="layui-icon">&#xe875;</i>
+        </div>
+    </div>
+</script>
+<script type="text/html" id="TPL-app-list-table-status">
+    {{#
+    var status = [
+    {title:'关闭',color:'red'},
+    {title:'开启',color:'green'}
+    ][d.status];
+    }}
+    <span class="layui-badge layui-bg-{{status.color}}">{{ status.title }}</span>
+</script>
+<script type="text/html" id="TPL-app-list-table-operating">
+    <a lay-event="edit" class="layui-btn layui-btn-xs">
+        编辑
+    </a>
+    <a lay-event="version" class="layui-btn layui-btn-xs layui-btn-danger">
+        版本
+    </a>
+    <a lay-event="card" class="layui-btn layui-btn-xs layui-btn-warm">
+        卡密
+    </a>
+    <a lay-event="auth" class="layui-btn layui-btn-xs layui-btn-success">
+        授权
+    </a>
+</script>
+<script>
+    layui.use(['admin', 'table', 'form', 'jquery', 'view'], function (admin, table, form, $) {
+        let tableFilter = 'app-list-table',
+            _cur_page = 0,
+            getWhere = function () {
+                return {
+                    soName: $('#so-name').val(),
+                    soAuthor: $('#so-author').val(),
+                    soTeamName: $('#so-teamName').val(),
+                    soQQ: $('#so-qq').val(),
+                    status: $('#so-status').val()
+                }
+            }, getId = function (data) {
+                if (data.length < 1) {
+                    admin.alert.error('请先选择数据');
+                    return false;
+                }
+                var id = new Array();
+                $.each(data, function (index, val) {
+                    id.push(val.id);
+                });
+                return id
+            };
+
+        form.render();
+        table.render({
+            elem: '#' + tableFilter,
+            url: '{:url('admin_ajax_get_app_list')}',
+            toolbar: '#app-list-toolbar',
+            title: '应用列表',
+            height: 'full-165',
+            cols: [[
+                {type: 'checkbox'},
+                {title: 'ID', field: 'id', minWidth: 100},
+                {title: '应用名称', field: 'name', minWidth: 100},
+                {
+                    title: '版本号',
+                    field: 'version',
+                    templet: function (d) {
+                        try {
+                            return d.get_version.version;
+                        } catch (e) {
+                            return '未发布';
+                        }
+                    },
+                    minWidth: 100
+                },
+                {title: '作者', field: 'author', minWidth: 100},
+                {title: '团队', field: 'team_name', minWidth: 100},
+                {title: '客服QQ', field: 'qq', minWidth: 100},
+                {
+                    title: '创建时间',
+                    field: 'create_time',
+                    templet: '<p><span title="{{d.create_time}}" class="nepadmin-c-gray">{{d.create_time}}</span></p>',
+                    align: 'center',
+                    minWidth: 200
+                },
+                {title: '启用', templet: '#TPL-app-list-table-status', align: 'center', minWidth: 100},
+                {title: '操作', templet: '#TPL-app-list-table-operating', width: 300, align: 'center'}
+            ]],
+            done: function (res, curr, count) {
+                _cur_page = curr;
+            },
+            page: true,
+            where: getWhere()
+        });
+
+        // 监听工具条
+        table.on('tool(' + tableFilter + ')', function (obj) {
+            let data = obj.data;
+            if (obj.event === 'edit') {
+                window.location.hash = '/app/edit/' + data.id;
+            } else if (obj.event === 'version') {
+                window.location.hash = '/app/version/' + data.id;
+            } else if (obj.event === 'card') {
+                window.location.hash = '/card/index/' + data.id;
+            } else if (obj.event === 'auth') {
+                window.location.hash = '/auth/index/' + data.id;
+            }
+        });
+
+        table.on('toolbar(' + tableFilter + ')', function (obj) {
+            if (obj.event === 'create') {
+                window.location.hash = '/app/create';
+                return true;
+            } else if (obj.event === 'del') {
+                let checkedData = table.checkStatus(obj.config.id).data,
+                    id = getId(checkedData);
+                if (!id) {
+                    return false
+                }
+
+                return layer.confirm('确定要删除？', {
+                    btn: ['确定', '取消']
+                }, function () {
+                    let loadMsg = layer.load(0, {shade: false});
+                    $.post("{:url('admin_ajax_app_delete')}", {id: id.join(',')}, function (d) {
+                        layer.close(loadMsg);
+                        if (d.status) {
+                            admin.alert.success('删除成功', {}, function (index) {
+                                layer.close(index);
+                                //执行重载
+                                table.reload(tableFilter, {page: {curr: 1}, where: getWhere()});
+                            });
+                        } else {
+                            admin.alert.error(data.info);
+                        }
+                    }, 'json').fail(function () {
+                        layer.close(loadMsg);
+                        admin.alert.error('系统繁忙, 请稍后再试');
+                    });
+                });
+            }
+        });
+
+        let active = {
+            reload: function () {
+                //执行重载
+                table.reload(tableFilter, {page: {curr: 1}, where: getWhere()});
+            }
+        };
+
+        bindEvent('[lay-active]', function () {
+            var type = $(this).attr('lay-active');
+            typeof active[type] !== 'undefined' && active[type]();
+        });
+    })
+</script>

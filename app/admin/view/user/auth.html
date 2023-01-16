@@ -1,0 +1,193 @@
+<title>{$site.title} - {$site.name}</title>
+<style>
+    .click_return {
+        margin-left: 5px;
+        margin-top: -4px;
+    }
+
+    .checkbox-37px .layui-form-checkbox {
+        margin-top: 0 !important;
+        height: 37px;
+        line-height: 37px;
+    }
+
+    .checkbox-37px .layui-form-checkbox > i {
+        height: 35px;
+        line-height: 37px;
+    }
+</style>
+<link rel="stylesheet" type="text/css" href="https://g.onlinfei.com/cloud-admin/css/formSelects.css">
+<script type="text/html" template lay-url="{:url('admin_ajax_get_user_info')}" lay-data="{id: layui.router().path[3]}"
+        lay-done="layui.__init(d.data);">
+    {{# if (d.status === 1) { }}
+    <div class="layui-fluid">
+
+        <div class="layui-card-body" style="padding: 15px;">
+            <form class="layui-form" action="" lay-filter="form-user-auth" onsubmit="return false;">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        用户授权应用
+                    </div>
+                    <div class="layui-card-body layui-row layui-col-space10">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">应用：</label>
+                            <div class="layui-input-block">
+                                <select name="app_list" xm-select="app_list" xm-select-search=""
+                                        xm-select-skin="default">
+                                    <option value="">选择应用</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-card">
+                    <div class="layui-card-header">授权设置</div>
+                    <div class="layui-card-body layui-row layui-col-space10" id="auth_list">
+                        <blockquote class="layui-elem-quote">未选择应用</blockquote>
+                    </div>
+                </div>
+                <div class="layui-card">
+                    <div class="layui-card-header">提交</div>
+                    <div class="layui-card-body layui-row layui-col-space10">
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <input type="hidden" name="id" value="{{ d.data.id }}">
+                                <button class="layui-btn" lay-submit="" lay-filter="form-user-auth-submit">立即提交
+                                </button>
+                                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    {{# } else {
+    layui.use('admin', function (admin) {
+    admin.alert.error('用户ID不存在', {}, function (index) {
+    layer.close(index);
+    window.history.go(-1);
+    });
+    });
+    } }}
+</script>
+<script>
+
+    layui.__init = function (user_info) {
+        layui.use(['admin', 'form', 'laydate', 'formSelects'], function () {
+            let $ = layui.$,
+                admin = layui.admin,
+                layer = layui.layer,
+                form = layui.form,
+                formSelects = layui.formSelects,
+                agent_info = JSON.parse('{:json_encode(config("agent"))}'),
+                selectData = {selected: {}},
+                showAuthSettingHtml = function (data) {
+                    let htmls = '';
+                    $.each(data, function (index, obj) {
+                        htmls += '<div class="layui-form-item">';
+                        htmls += '<label class="layui-form-label">' + obj.name + '</label>';
+                        htmls += '<div class="layui-input-block">';
+                        htmls += '<select name="app_auth_' + obj.value + '" lay-verify="required" lay-search="">';
+                        htmls += '<option value="">请选择应用权限</option>';
+                        $.each(agent_info, function (auth_index, auth_obj) {
+                            htmls += '<option value="' + auth_index + '"';
+                            if (typeof auth_info.auth[obj.value] !== 'undefined' && auth_index.toString() === auth_info.auth[obj.value].toString()) {
+                                htmls += 'selected=""';
+                            }
+                            htmls += '>' + auth_obj.name + '</option>';
+                        });
+                        htmls += '</select>';
+                        htmls += '</div>';
+                        htmls += '</div>';
+                    });
+                    if (!htmls) htmls = '<blockquote class="layui-elem-quote">未选择应用</blockquote>';
+                    $('#auth_list').empty().append(htmls);
+                    form.render(null, 'form-user-auth');
+                }, inArray = function () {
+                    var val = arguments[0] || '',
+                        arr = arguments[1] || [];
+                    return arr.some(function (v) {
+                        return val.toString() === v.toString();
+                    })
+                }, auth_info = function () {
+                    let res = {app: [], auth: {}};
+                    $.each(user_info.auth, function (index, val) {
+                        res.app.push(index);
+                        res.auth[index] = val;
+                    });
+                    return res;
+                }();
+
+            form.render(null, 'form-user-auth');
+
+            formSelects.config('app_list', {
+                beforeSuccess: function (id, url, searchVal, res) {
+                    let result = [];
+                    res.data.forEach(function (obj, index) {
+                        result.push({name: obj.name, value: obj.id});
+                    });
+                    return result;
+                }, success: function (id, url, searchVal, result) {
+                    formSelects.value(id, auth_info.app);
+                    $.each(result.data, function (index, item) {
+                        if (inArray(item.value, auth_info.app)) {
+                            selectData.selected[item.value] = item;
+                        }
+                    });
+                    showAuthSettingHtml(formSelects.value(id));
+                }
+            }).data('app_list', 'server', {
+                url: "{:url('admin_ajax_get_app')}"
+            });
+
+            formSelects.on('app_list', function (id, vals, val, isAdd, isDisabled) {
+                if (isAdd) {
+                    selectData.selected[val.value] = val;
+                } else {
+                    if (typeof selectData.selected[val.value] !== 'undefined')
+                        delete selectData.selected[val.value];
+                }
+
+                showAuthSettingHtml(selectData.selected);
+            });
+
+            /* 监听表单提交 */
+            form.on('submit(form-user-auth-submit)', function (data) {
+                data = data.field;
+
+                if ('' === $.trim(data.app_list)) {
+                    return layer.msg('请选择应用', {icon: 2});
+                }
+
+                let auth = {};
+                $.each(data.app_list.split(','), function (index, val) {
+                    let fieldName = 'app_auth_' + val;
+                    auth[val] = data[fieldName];
+                });
+
+                var index = layer.load(0, {shade: false});
+                $.ajax({
+                    url: '{:url('admin_ajax_user_auth_edit')}',
+                    type: 'post',
+                    dataType: 'json',
+                    data: {id: data.id, auth: auth},
+                }).done(function (data) {
+                    layer.close(index);
+
+                    if (data.status === 1) {
+                        admin.alert.success('设置成功', {}, function (index) {
+                            layer.close(index);
+                            layui.index.render();
+                        });
+                    } else {
+                        admin.alert.error(data.info);
+                    }
+                }).fail(function () {
+                    layer.close(index);
+                    admin.alert.error('服务器繁忙，请稍后再试！');
+                });
+            });
+        });
+    }
+</script>

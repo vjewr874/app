@@ -1,0 +1,227 @@
+{extend name="public/base" /}
+
+{block name="main"}
+<div class="container-fluid" menu="index" id="app-body">
+</div>
+<script type="text/html" id="app-body-html">
+    <div class="alert alert-info" role="alert">
+        欢迎：{:config('user_info.username')}<span>（ {:config('user_info.name')} ）</span>
+        <div class="pull-right">现在时间：<span class="body_time_txt">--</span></div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6 col-lg-3">
+            <div class="card bg-primary">
+                <div class="card-body clearfix">
+                    <div class="pull-right">
+                        <p class="h6 text-white m-b-0">应用数量</p>
+                        <p class="h3 text-white m-t-0">{{ d.appNumber }}个</p>
+                    </div>
+                    <div class="pull-left"><span class="img-avatar img-avatar-48 bg-translucent"><i
+                            class="mdi mdi-application fa-1-5x"></i></span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+            <div class="card bg-danger">
+                <div class="card-body clearfix">
+                    <div class="pull-right">
+                        <p class="h6 text-white m-b-0">授权数量</p>
+                        <p class="h3 text-white m-t-0">{{ d.authNumber }}个</p>
+                    </div>
+                    <div class="pull-left"><span class="img-avatar img-avatar-48 bg-translucent"><i
+                            class="mdi mdi-angularjs fa-1-5x"></i></span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+            <div class="card bg-success">
+                <div class="card-body clearfix">
+                    <div class="pull-right">
+                        <p class="h6 text-white m-b-0">卡密数量</p>
+                        <p class="h3 text-white m-t-0">{{ d.cardNumber }}张</p>
+                    </div>
+                    <div class="pull-left"><span class="img-avatar img-avatar-48 bg-translucent"><i
+                            class="mdi mdi-credit-card fa-1-5x"></i></span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+            <div class="card bg-purple">
+                <div class="card-body clearfix">
+                    <div class="pull-right">
+                        <p class="h6 text-white m-b-0">下级代理</p>
+                        <p class="h3 text-white m-t-0">{{ d.userNumber }}个</p>
+                    </div>
+                    <div class="pull-left"><span class="img-avatar img-avatar-48 bg-translucent"><i
+                            class="mdi mdi-account fa-1-5x"></i></span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4>最新授权信息</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>应用</th>
+                                <th>授权关键</th>
+                                <th>QQ</th>
+                                <th>授权时间</th>
+                                <th>到期时间</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {{# layui.each(d.newAuthList, function(index, item){ }}
+                            <tr>
+                                <td>
+                                    {{ item.id }}
+                                </td>
+                                <td>
+                                    {{ item.get_app_info.name }}(ID: {{ item.appid }} )
+                                </td>
+                                <td>
+                                    {{ item.auth_content }}
+                                </td>
+                                <td>
+                                    {{ item.qq }}
+                                </td>
+                                <td>
+                                    {{ item.create_time }}
+                                </td>
+                                <td>
+                                    {{ item.expire_time ? layui.util.toDateString(item.expire_time * 1000, 'yyyy-MM-dd
+                                    HH:mm:ss') : '永久' }}
+                                </td>
+                            </tr>
+                            {{# }); }}
+                            {{# if(!d.newAuthList.length){ }}
+                            <tr>
+                                <td colspan="6" align="center">
+                                    未获取到相关信息
+                                </td>
+                            </tr>
+                            {{# } }}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4>公告信息</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>标题</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {{# layui.each(d.noticeList, function(index, item){ }}
+                            <tr>
+                                <td data-event="noticeDetail"
+                                    data-json="{{ encodeURIComponent(JSON.stringify(item)) }}">
+                                    {{ item.title }}
+                                </td>
+                            </tr>
+                            {{# }); }}
+                            {{# if(d.noticeList.length == 0){ }}
+                            <tr>
+                                <td colspan="6" align="center">
+                                    未获取到相关信息
+                                </td>
+                            </tr>
+                            {{# } }}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/html" id="notice-detail-html">
+    <div class="container-fluid">
+        <div class="card" style="box-shadow: none;">
+            <div class="card-header" style="text-align: center;">
+                <h4>{{ d.title }}</h4>
+            </div>
+            <div class="card-header" style="text-align: center;">
+                <h6>发布时间: {{ d.create_time }}</h6>
+            </div>
+            <div class="card-body">
+                <iframe id="notice-content" style="width: 100%;height: 773px;border-width: 0px;"></iframe>
+            </div>
+        </div>
+    </div>
+</script>
+<script>
+    layui.use(['form', 'laytpl', 'util'], function (form, laytpl, unit) {
+        var showDateText = function () {
+            let myDate = new Date;
+            let year = myDate.getFullYear(); //获取当前年
+            let mon = appendzero(myDate.getMonth() + 1); //获取当前月
+            let date = appendzero(myDate.getDate()); //获取当前日
+            let h = appendzero(myDate.getHours());//获取当前小时数(0-23)
+            let m = appendzero(myDate.getMinutes());//获取当前分钟数(0-59)
+            let s = appendzero(myDate.getSeconds());//获取当前秒
+            let week = myDate.getDay();
+            let weeks = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
+            $(".body_time_txt").text(year + "-" + mon + "-" + date + " " + h + ":" + m + ":" + s + " " + weeks[week]);
+        };
+
+
+        var loadMsg = layer.load();
+        $.ajax({
+            url: "{:url('user_ajax_get_console_info')}",
+            type: 'get',
+            dataType: 'json',
+        }).done(function (res) {
+            if (res.status === 1) {
+                template('#app-body-html', '#app-body', res.data);
+                showDateText();
+                setInterval(showDateText, 1000);
+            } else {
+                layer.msg('获取控制台统计失败');
+            }
+        }).fail(function () {
+            layer.msg('服务器繁忙，请稍后再试！');
+        }).complete(function () {
+            layer.close(loadMsg);
+        });
+
+        unit.event('data-event', {
+            noticeDetail: function (_this) {
+                var data = helper.getJson(_this),
+                    WH = helper.getWH();
+                helper.popup({
+                    title: '公告详情',
+                    area: [WH[0] + 'px', WH[1]],
+                    id: 'LAY-notice-detail',
+                    success: function (layero, index) {
+                        data.layer_index = index;
+                        // 渲染模板
+                        template('#notice-detail-html', '#LAY-notice-detail', data);
+                        // 显示公告内容
+                        $('#notice-content').contents().find('body').html(data.content);
+                    }
+                });
+            }
+        })
+    });
+</script>
+{/block}

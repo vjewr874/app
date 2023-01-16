@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <title>{block name="title"}{$site.title} - {$site.name}{/block}</title>
+    <meta name="keywords" content="{$site.keywords}">
+    <meta name="description" content="{$site.description}">
+    <link href="https://g.onlinfei.com/lyear/css/??bootstrap.min.css,materialdesignicons.min.css,style.min.css"
+          rel="stylesheet">
+    <link href="__INDEX__/style.css"
+          rel="stylesheet">
+    <link href="https://g.onlinfei.com/lyear/js/jconfirm/jquery-confirm.min.css" rel="stylesheet">
+    <script type="text/javascript"
+            src="https://g.onlinfei.com/lyear/js/??jquery.min.js,bootstrap.min.js,perfect-scrollbar.min.js,jconfirm/jquery-confirm.min.js?v1"></script>
+    <script src="https://g.onlinfei.com/cloud-admin/layui-v2.4.5/layui.js?0.48721231644"></script>
+    <script>
+        // var debug = true;
+        var siteApi = {
+            getAppList: "{:url('index_ajax_get_app_list')}",
+            queryAuth: "{:url('index_ajax_query_auth')}",
+            createAuth: "{:url('index_ajax_create_auth')}",
+            agentQuery: "{:url('index_ajax_agent_query')}",
+            getUpdateHistory: "{:url('index_ajax_get_update_history')}",
+            getQqQrcode: "{:url('index_ajax_get_qq_qrcode')}",
+            getQqQrcodeStatus: "{:url('index_ajax_get_qq_qrcode_status')}",
+            downloadSourceCode: "{:url('index_ajax_download_source_code')}",
+        }
+    </script>
+</head>
+
+<body>
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+        <div class="login-header text-center">
+            <img src="{$site.data.site_logo}">
+        </div>
+        <div class="container-fluid site-content">
+            <div class="card">
+                 <center><h3><font color="#FF0000">亿</font><font color="#E80017">码</font><font color="#D1002E">酷</font><font color="#BA0045">站</font><font color="#A3005C">线</font><font color="#8C0073">授</font><font color="#75008A">权</font><font color="#5E00A1">查</font><font color="#4700B8">询</font><font color="#3000CF">系</font><font color="#1900E6">统</font></h3></center>
+                <div class="card-body text-center auth-nav"
+                     style="padding: 32px 0;border-top: 5px solid #48b0f7;">
+                    <button class="btn btn-info" data-page="queryAuth">授权查询</button>
+                    <button class="btn btn-info" data-page="createAuth">在线授权</button>
+                    <button class="btn btn-info" data-page="agentQuery">代理查询</button>
+                    <button class="btn btn-info" data-page="appList">应用列表</button>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h4 id="app-title">{{ title }}</h4>
+                </div>
+                <div class="card-body" id="app-body">
+                    {{ body }}
+                </div>
+            </div>
+            <div class="sidebar-footer text-center">
+                <p>
+                    <a href="http://beian.miit.gov.cn/" target="_blank">{$site.data.icp_number}</a>
+                </p>
+                <p>
+                    {$site.data.site_copyright|raw}{$site.data.site_statis|raw}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="__INDEX__/main.js?v1"></script>
+</body>
+</html>

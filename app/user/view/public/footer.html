@@ -1,0 +1,12 @@
+<script>
+    $(function () {
+        var menu = $('[menu]');
+        if (!menu || !(menu = menu.attr('menu'))) {
+            return false;
+        }
+
+        var menuName = $('[menu-name=' + menu + ']');
+        menuName && menuName.addClass('active');
+
+    });
+</script>

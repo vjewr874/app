@@ -1,0 +1,139 @@
+<title>{$site.title} - {$site.name}</title>
+<div class="layui-fluid" id="VIEW-list-table">
+    <div class="layui-row layui-col-space10">
+        <div class="layui-col-md10">
+            <div class="layui-card">
+                <div class="layui-card-body nepadmin-table-full layer-event">
+                    <table id="card-list-table" lay-filter="card-list-table"></table>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md2">
+            <div class="layui-card">
+                <div class="layui-card-header">筛选数据</div>
+                <div class="layui-card-body">
+                    <script type="text/html" template lay-url="{:url('admin_ajax_get_app')}"
+                            lay-done="layui.form.render();">
+                        <form class="layui-row layui-col-space10 layui-form table-reload-btn">
+                            <div class="layui-col-md12 layui-col-xs6">
+                                <select id="so-type">
+                                    <option value="">选择类型</option>
+                                    <option value="create_auth">创建授权</option>
+                                    <option value="edit_auth">编辑授权</option>
+                                    <option value="delete_auth">删除授权</option>
+                                    <option value="create_card">创建卡密</option>
+                                    <option value="edit_card">编辑卡密</option>
+                                    <option value="delete_card">删除卡密</option>
+                                    <option value="create_user">创建用户</option>
+                                    <option value="edit_user">编辑用户</option>
+                                    <option value="delete_user">删除用户</option>
+                                    <option value="self_edit">用户编辑</option>
+                                    <option value="user_login">用户登录</option>
+                                </select>
+                            </div>
+                            <div class="layui-col-md12 layui-col-xs6">
+                                <input type="text" class="layui-input" id="so-userId" placeholder="用户ID">
+                            </div>
+                            <div class="layui-col-md12 layui-col-xs12">
+                                <div class="layui-row layui-col-space10">
+                                    <div class="layui-col-xs6">
+                                        <div class="layui-btn layui-btn-sm layui-btn-fluid" lay-active="reload">筛选</div>
+                                    </div>
+                                    <div class="layui-col-xs6">
+                                        <button type="reset"
+                                                class="layui-btn layui-btn-sm layui-btn-fluid layui-btn-primary">
+                                            重置
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </script>
+                </div>
+            </div>
+
+<!--            <div class="layui-card nepadmin-font-12">-->
+            <!--                <div class="layui-card-header">-->
+            <!--                    <i class="layui-icon">&#xe78c;</i> 帮助中心-->
+            <!--                </div>-->
+            <!--                <div class="layui-card-body">-->
+            <!--                    <p>商品在出售中列表找不到？</p>-->
+            <!--                    <p class="nepadmin-c-gray">商品售罄库存为0，在已售罄列表中，提醒您该添加库存了。待付款订单也会占据库存，其超时关闭后库存才会释放。</p>-->
+            <!--                    <hr/>-->
+            <!--                    <p>-->
+            <!--                        <a>如何新建／发布商品？</a>-->
+            <!--                    </p>-->
+            <!--                    <p>-->
+            <!--                        <a>如何管理商品？</a>-->
+            <!--                    </p>-->
+            <!--                    <p>-->
+            <!--                        <a>商品如何排序？</a>-->
+            <!--                    </p>-->
+            <!--                    <p>-->
+            <!--                        <a>商品销量找不到对应的订单？</a>-->
+            <!--                    </p>-->
+            <!--                    <p>-->
+            <!--                        <a>商品二维码使用说明</a>-->
+            <!--                    </p>-->
+            <!--                    <p>-->
+            <!--                        <a>商品可以设置用积分兑换吗？</a>-->
+            <!--                    </p>-->
+            <!--                </div>-->
+            <!--            </div>-->
+
+        </div>
+    </div>
+</div>
+<script>
+    layui.use(['admin', 'table', 'form', 'jquery', 'laydate', 'view', 'util'], function (admin, table, form, $) {
+        let tableFilter = 'card-list-table',
+            _cur_page = 0,
+            util = layui.util,
+            getWhere = function () {
+                return {
+                    soType: $('#so-type').val(),
+                    soUserId: $('#so-userId').val(),
+                }
+            };
+
+        form.render();
+        table.render({
+            elem: '#' + tableFilter,
+            url: '{:url('admin_ajax_get_log_list')}',
+            title: '日志列表',
+            height: 'full-165',
+            cols: [[
+                {type: 'checkbox'},
+                {title: 'ID', field: 'id', minWidth: 100},
+                {title: '日志类型', field: 'type', minWidth: 100},
+                {
+                    title: '操作人ID',
+                    field: 'user_id',
+                    templet: function (d) {
+                        return d.user_id ? d.user_id : '无'
+                    },
+                    minWidth: 170
+                },
+                {title: '日志内容', field: 'content'},
+                {title: '操作时间', field: 'create_time', minWidth: 200}
+            ]],
+            done: function (res, curr, count) {
+                _cur_page = curr;
+            },
+            page: true,
+            where: getWhere()
+        });
+
+        let active = {
+            reload: function () {
+                //执行重载
+                table.reload(tableFilter, {page: {curr: 1}, where: getWhere()});
+            }
+        };
+
+        bindEvent('[lay-active]', function () {
+            var type = $(this).attr('lay-active');
+            typeof active[type] !== 'undefined' && active[type]();
+        });
+    });
+</script>

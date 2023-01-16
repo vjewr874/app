@@ -1,0 +1,311 @@
+{extend name="public/base" /}
+
+{block name="main"}
+<div class="container-fluid" menu="user-index">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4>用户列表</h4>
+                </div>
+                <div class="card-body">
+                    <div class="card-toolbar clearfix p-l-0 p-r-0 p-t-0">
+                        <form class="pull-right so-form form-inline" onsubmit="return false;">
+                            <div class="form-group">
+                                <input class="form-control" type="text" id="soUserId" placeholder="用户ID">
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control" type="text" id="soUserName" placeholder="用户名">
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control" type="text" id="soQq" placeholder="QQ">
+                            </div>
+                            <div class="form-group">
+                                <select class="form-control" id="soStatus">
+                                    <option value="">选择状态</option>
+                                    <option value="1">正常</option>
+                                    <option value="0">封禁</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-default" data-event="tableReload">搜索</button>
+                                <button type="reset" class="btn btn-default">重置</button>
+                            </div>
+                        </form>
+                        <div class="so-form">
+                            <a class="btn btn-primary m-r-5" data-event="create">
+                                <i class="mdi mdi-plus"></i> 新增
+                            </a>
+                            <a class="btn btn-success m-r-5" data-event="authStart">
+                                <i class="mdi mdi-check"></i> 启用
+                            </a>
+                            <a class="btn btn-warning m-r-5" data-event="authStop">
+                                <i class="mdi mdi-block-helper"></i> 禁用
+                            </a>
+                            <a class="btn btn-danger" data-event="authDelete">
+                                <i class="mdi mdi-window-close"></i> 删除
+                            </a>
+                        </div>
+                    </div>
+                    <div class="table-responsive" id="app-body">
+                    </div>
+                    <ul class="pagination no-gutters" id="page-ul">
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="app-body-html">
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th style="width: 51px;">
+                <label class="lyear-checkbox checkbox-primary">
+                    <input type="checkbox" id="check-all"><span></span>
+                </label>
+            </th>
+            <th>ID</th>
+            <th>用户名</th>
+            <th>姓名</th>
+            <th>QQ号</th>
+            <th>创建时间</th>
+            <th>状态</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#
+        var status = [
+        {title:'封禁',color:'danger'},
+        {title:'正常',color:'success'},
+        ];
+        }}
+        {{# $.each(d, function (index, item){ }}
+        <tr>
+            <td>
+                <label class="lyear-checkbox checkbox-primary">
+                    <input type="checkbox" name="id[]" value="{{ item.id }}"><span></span>
+                </label>
+            </td>
+            <th scope="row">{{ item.id }}</th>
+            <th scope="row">{{ item.username }}</th>
+            <td>{{ item.name }}</td>
+            <td>{{ item.qq === null ? '未绑定' : item.qq }}</td>
+            <td>{{ item.create_time }}
+            </td>
+            <td><span class="label label-{{ status[item.status].color }}">{{ status[item.status].title }}</span></td>
+            <td>
+                <button class="btn  btn-xs btn-info" data-event="edit"
+                        data-json="{{ encodeURIComponent(JSON.stringify(item)) }}">修改
+                </button>
+                <button class="btn  btn-xs btn-danger" data-event="delete" data-id="{{ item.id }}">删除</button>
+            </td>
+        </tr>
+        {{# }); }}
+        {{# if(d.length == 0){ }}
+        <tr>
+            <td colspan="9" align="center">未获取到相关信息</td>
+        </tr>
+        {{# } }}
+        </tbody>
+    </table>
+</script>
+<script type="text/html" id="user-edit-html">
+    <div class="card-body">
+        <form id="editSubmit" onsubmit="return false;">
+            <div id="edit-app-list">
+                <select class="form-control" style="display: none;">
+                    <option value="">选择应用</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>用户名</label>
+                <input class="form-control" type="text" name="username" value="{{ d.username }}">
+                <small class="help-block">用户名由字母、数字组成的3-20位字符串</small>
+            </div>
+            <div class="form-group">
+                <label>密码</label>
+                <input class="form-control" type="text" name="password">
+                <small class="help-block">空为不修改，密码由字母+数字或字符组成的8-20位字符串</small>
+            </div>
+            <div class="form-group">
+                <label>姓名</label>
+                <input class="form-control" type="text" name="name" value="{{ d.name || '无名氏' }}">
+            </div>
+            <div class="form-group">
+                <label class="btn-block">状态</label>
+                <label class="lyear-switch switch-solid switch-primary">
+                    <input type="checkbox" name="status" {{# if(d.status){ }}checked="" {{# } }}>
+                    <span></span>
+                </label>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary m-r-5">确 定</button>
+                <input type="hidden" name="id" value="{{ d.id }}">
+                <button type="button" class="btn btn-default" data-event="close" data-index="{{ d.layer_index }}">取 消
+                </button>
+            </div>
+        </form>
+    </div>
+</script>
+<script type="text/html" id="user-create-html">
+    <div class="card-body">
+        <form id="createSubmit" onsubmit="return false;">
+            <div id="create-app-list">
+                <select class="form-control" style="display: none;">
+                    <option value="">选择应用</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>用户名</label>
+                <input class="form-control" type="text" name="username">
+                <small class="help-block">用户名由字母、数字组成的3-20位字符串</small>
+            </div>
+            <div class="form-group">
+                <label>密码</label>
+                <input class="form-control" type="text" name="password">
+                <small class="help-block">密码由字母+数字或字符组成的8-20位字符串</small>
+            </div>
+            <div class="form-group">
+                <label>姓名</label>
+                <input class="form-control" type="text" name="name" value="无名氏">
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary m-r-5">确 定</button>
+                <button type="button" class="btn btn-default" data-event="close" data-index="{{ d.layer_index }}">取 消
+                </button>
+            </div>
+        </form>
+    </div>
+</script>
+<script>
+    layui.use(['form', 'laytpl', 'util'], function (form, laytpl, util) {
+
+        // 获取搜索数据
+        var __getSoParams = function () {
+            return {
+                soUserId: $('#soUserId').val(),
+                soUserName: $('#soUserName').val(),
+                soQq: $('#soQq').val(),
+                soStatus: $('#soStatus').val(),
+                page: helper.get('pageNumber'),
+            }
+        };
+
+        helper.__init(function () {
+            // 设置分页数
+            helper.set('pageNumber', layui.router().path[1]);
+            // 获取授权信息
+            var params = helper.loadMsg({
+                data: __getSoParams()
+            });
+            helper.__getUserList(params, function (res) {
+                // 模板渲染
+                template('#app-body-html', '#app-body', res.data);
+                // 加载分页
+                helper.__page('#page-ul', {
+                    count: res.count,
+                    curr: helper.get('pageNumber'),
+                }, function () {
+                    helper.__init();
+                });
+            });
+        });
+
+        // 事件监听
+        util.event('data-event', {
+            tableReload: function () {
+                window.location.hash = '/page/1';
+                helper.set('pageNumber', 1);
+                helper.__init();
+            },
+            edit: function (_this) {
+                var data = helper.getJson(_this),
+                    WH = helper.getWH();
+                helper.popup({
+                    title: '授权编辑( ' + data.id + ' )',
+                    area: [WH[0] + 'px', WH[1]],
+                    id: 'LAY-user-edit',
+                    success: function (layero, index) {
+                        data.layer_index = index;
+                        // 渲染模板
+                        template('#user-edit-html', '#LAY-user-edit', data);
+                        // 获取应用列表
+                        helper.__getAppList(function (res) {
+                            res.optionId = data.auth;
+                            template('#app-list-group-html', '#edit-app-list', res);
+                        });
+                        // 监听表单提交
+                        helper.form('#editSubmit', function (data) {
+                            data.status = data.status === 'on' ? 1 : 0;
+                            helper.__ajax(authConfig.ajaxEditUserUrl, helper.loadMsg({
+                                type: 'post',
+                                data: data,
+                                success: function (res) {
+                                    if (res.status === 1) {
+                                        layer.msg('保存成功', {time: 1000}, function () {
+                                            layer.close(index);
+                                            helper.__init();
+                                        });
+                                    } else {
+                                        layer.msg(res.info);
+                                    }
+                                }
+                            }));
+                        });
+                    }
+                });
+            },
+            create: function () {
+                var WH = helper.getWH();
+                helper.popup({
+                    title: '用户编辑',
+                    area: [WH[0] + 'px', WH[1]],
+                    id: 'LAY-user-create',
+                    success: function (layero, index) {
+                        // 渲染模板
+                        template('#user-create-html', '#LAY-user-create', {layer_index: index});
+                        // 获取应用列表
+                        helper.__getAppList(function (res) {
+                            template('#app-list-group-html', '#create-app-list', res);
+                        });
+                        // 监听表单提交
+                        helper.form('#createSubmit', function (data) {
+                            helper.__ajax(authConfig.ajaxCreateUserUrl, helper.loadMsg({
+                                type: 'post',
+                                data: data,
+                                success: function (res) {
+                                    if (res.status === 1) {
+                                        layer.msg('添加成功', {time: 1000}, function () {
+                                            layer.close(index);
+                                            helper.__init();
+                                        });
+                                    } else {
+                                        layer.msg(res.info);
+                                    }
+                                }
+                            }));
+                        });
+                    }
+                });
+            },
+            authStart: function () {
+                helper.__editUserStatus(1);
+            },
+            authStop: function () {
+                helper.__editUserStatus(0);
+            },
+            authDelete: function () {
+                helper.__deleteUser();
+            },
+            delete: function (_this) {
+                helper.__deleteUser([$(_this).data('id')]);
+            },
+            close: function (_this) {
+                layer.close($(_this).data('index'));
+            }
+        });
+    });
+</script>
+{/block}

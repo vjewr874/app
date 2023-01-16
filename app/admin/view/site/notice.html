@@ -1,0 +1,304 @@
+<title>{$site.title} - {$site.name}</title>
+<div class="layui-fluid" id="VIEW-list-table">
+    <div class="layui-row layui-col-space10">
+        <div class="layui-col-md10">
+            <div class="layui-card">
+                <div class="layui-card-body nepadmin-table-full layer-event">
+                    <table id="notice-list-table" lay-filter="notice-list-table"></table>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md2">
+            <div class="layui-card">
+                <div class="layui-card-header">筛选数据</div>
+                <div class="layui-card-body">
+                    <form class="layui-row layui-col-space10 layui-form table-reload-btn">
+                        <div class="layui-col-md12 layui-col-xs6">
+                            <input type="text" class="layui-input" id="so-title" placeholder="标题">
+                        </div>
+                        <div class="layui-col-md12 layui-col-xs12">
+                            <div class="layui-row layui-col-space10">
+                                <div class="layui-col-xs6">
+                                    <div class="layui-btn layui-btn-sm layui-btn-fluid" lay-active="reload">筛选</div>
+                                </div>
+                                <div class="layui-col-xs6">
+                                    <button type="reset"
+                                            class="layui-btn layui-btn-sm layui-btn-fluid layui-btn-primary">
+                                        重置
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+<!--            <div class="layui-card nepadmin-font-12">-->
+            <!--                <div class="layui-card-header">-->
+            <!--                    <i class="layui-icon">&#xe78c;</i> 帮助中心-->
+            <!--                </div>-->
+            <!--                <div class="layui-card-body">-->
+            <!--                    <p>商品在出售中列表找不到？</p>-->
+            <!--                    <p class="nepadmin-c-gray">商品售罄库存为0，在已售罄列表中，提醒您该添加库存了。待付款订单也会占据库存，其超时关闭后库存才会释放。</p>-->
+            <!--                    <hr/>-->
+            <!--                    <p>-->
+            <!--                        <a>如何新建／发布商品？</a>-->
+            <!--                    </p>-->
+            <!--                    <p>-->
+            <!--                        <a>如何管理商品？</a>-->
+            <!--                    </p>-->
+            <!--                    <p>-->
+            <!--                        <a>商品如何排序？</a>-->
+            <!--                    </p>-->
+            <!--                    <p>-->
+            <!--                        <a>商品销量找不到对应的订单？</a>-->
+            <!--                    </p>-->
+            <!--                    <p>-->
+            <!--                        <a>商品二维码使用说明</a>-->
+            <!--                    </p>-->
+            <!--                    <p>-->
+            <!--                        <a>商品可以设置用积分兑换吗？</a>-->
+            <!--                    </p>-->
+            <!--                </div>-->
+            <!--            </div>-->
+
+        </div>
+    </div>
+</div>
+<script type="text/html" id="notice-list-toolbar">
+    <div class="layui-btn-container">
+        <div class="layui-btn layui-btn-sm" lay-event="create">发布公告</div>
+        <div class="layui-btn layui-btn-sm layui-btn-primary" lay-event="del">删除</div>
+    </div>
+</script>
+<script type="text/html" id="TPL-notice-list-table-operating">
+    <a lay-event="edit" class="layui-btn layui-btn-xs">
+        编辑
+    </a>
+</script>
+<script type="text/html" id="notice-create-html">
+    <div class="layui-form" lay-filter="notice-create-form" style="padding: 20px 0 0 0;">
+        <div class="layui-form-item">
+            <label class="layui-form-label">标题</label>
+            <div class="layui-input-block">
+                <input type="text" name="title" lay-verify="required"
+                       placeholder="公告标题" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">公告内容</label>
+            <div class="layui-input-block">
+                <textarea name="content" class="layui-textarea" lay-verify="required"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">顶置</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="is_top" lay-skin="switch" lay-text="是|否">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <div class="layui-footer">
+                    <button class="layui-btn" lay-submit="" lay-filter="notice-create-submit">立即提交</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/html" id="notice-edit-html">
+    <div class="layui-form" lay-filter="notice-edit-form" style="padding: 20px 0 0 0;">
+        <div class="layui-form-item">
+            <label class="layui-form-label">标题</label>
+            <div class="layui-input-block">
+                <input type="text" name="title" value="{{ d.title || '' }}" lay-verify="required"
+                       placeholder="公告标题" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">公告内容</label>
+            <div class="layui-input-block">
+                <textarea name="content" class="layui-textarea" lay-verify="required">{{ d.content || '' }}</textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">顶置</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="is_top" lay-skin="switch" lay-text="是|否" {{# if(d.is_top){ }}checked="" {{#
+                       } }}>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <div class="layui-footer">
+                    <input type="hidden" name="id" value="{{ d.id }}">
+                    <button class="layui-btn" lay-submit="" lay-filter="notice-edit-submit">立即提交</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<script>
+    layui.use(['admin', 'table', 'form', 'jquery', 'laydate', 'view', 'util'], function (admin, table, form, $) {
+        let tableFilter = 'notice-list-table',
+            _cur_page = 0,
+            getWhere = function () {
+                return {
+                    soTitle: $('#so-title').val(),
+                }
+            }, getId = function (data) {
+                if (data.length < 1) {
+                    admin.alert.error('请先选择数据');
+                    return false;
+                }
+                let id = new Array();
+                $.each(data, function (index, val) {
+                    id.push(val.id);
+                });
+                return id
+            };
+
+        form.render();
+        table.render({
+            elem: '#' + tableFilter,
+            url: '{:url('admin_ajax_get_notice_list')}',
+            toolbar: '#notice-list-toolbar',
+            title: '公告列表',
+            height: 'full-165',
+            cols: [[
+                {type: 'checkbox'},
+                {title: 'ID', field: 'id', width: 80},
+                {title: '标题', field: 'title', minWidth: 100},
+                {title: '内容', field: 'content'},
+                {title: '发布时间', field: 'create_time', width: 200},
+                {title: '操作', templet: '#TPL-notice-list-table-operating', width: 120, align: 'center'}
+            ]],
+            done: function (res, curr, count) {
+                _cur_page = curr;
+            },
+            page: true,
+            where: getWhere()
+        });
+
+        table.on('toolbar(' + tableFilter + ')', function (obj) {
+            if (obj.event === 'create') {
+                let WH = getWH();
+                admin.popup({
+                    title: '发布公告',
+                    area: [WH[0] + 'px', WH[1]],
+                    id: 'LAY-notice-create',
+                    success: function (layero, index) {
+                        template('#notice-create-html', '#LAY-notice-create', {});
+                        layui.form.render();
+                        form.on('submit(notice-create-submit)', function (data) {
+                            data = data.field;
+                            let loadMsg = layer.load(0, {shade: false});
+                            $.ajax({
+                                url: '{:url('admin_ajax_notice_create')}',
+                                type: 'post',
+                                dataType: 'json',
+                                data: data,
+                            }).done(function (data) {
+                                layer.close(loadMsg);
+                                if (data.status === 1) {
+                                    admin.alert.success('创建成功', {}, function (sIndex) {
+                                        layer.close(index);
+                                        layer.close(sIndex);
+                                        active.reload()
+                                    });
+                                } else {
+                                    admin.alert.error(data.info);
+                                }
+                            }).fail(function () {
+                                layer.close(loadMsg);
+                                admin.alert.error('服务器繁忙，请稍后再试！');
+                            });
+                        });
+                    }
+                });
+            } else if (obj.event === 'del') {
+                let checkedData = table.checkStatus(obj.config.id).data,
+                    id = getId(checkedData);
+                if (!id) {
+                    return false
+                }
+
+                layer.confirm('确定要删除？', {
+                    btn: ['确定', '取消']
+                }, function () {
+                    let loadMsg = layer.load(0, {shade: false});
+                    $.post("{:url('admin_ajax_notice_delete')}", {id: id.join(',')}, function (d) {
+                        layer.close(loadMsg);
+                        if (d.status) {
+                            admin.alert.success('删除成功', {}, function (index) {
+                                layer.close(index);
+                                //执行重载
+                                table.reload(tableFilter, {page: {curr: 1}, where: getWhere()});
+                            });
+                        } else {
+                            admin.alert.error(data.info);
+                        }
+                    }, 'json').fail(function () {
+                        layer.close(loadMsg);
+                        admin.alert.error('系统繁忙, 请稍后再试');
+                    });
+                });
+            }
+        });
+
+        // 监听工具条
+        table.on('tool(' + tableFilter + ')', function (obj) {
+            let data = obj.data;
+
+            if (obj.event === 'edit') {
+                let WH = getWH();
+                admin.popup({
+                    title: '公告编辑',
+                    area: [WH[0] + 'px', WH[1]],
+                    id: 'LAY-notice-edit',
+                    success: function (layero, index) {
+                        template('#notice-edit-html', '#LAY-notice-edit', data);
+                        layui.form.render();
+                        form.on('submit(notice-edit-submit)', function (data) {
+                            data = data.field;
+                            let loadMsg = layer.load(0, {shade: false});
+                            $.ajax({
+                                url: '{:url('admin_ajax_notice_edit')}',
+                                type: 'post',
+                                dataType: 'json',
+                                data: data,
+                            }).done(function (data) {
+                                layer.close(loadMsg);
+                                if (data.status === 1) {
+                                    admin.alert.success('保存成功', {}, function (sIndex) {
+                                        layer.close(index);
+                                        layer.close(sIndex);
+                                        active.reload()
+                                    });
+                                } else {
+                                    admin.alert.error(data.info);
+                                }
+                            }).fail(function () {
+                                layer.close(loadMsg);
+                                admin.alert.error('服务器繁忙，请稍后再试！');
+                            });
+                        });
+                    }
+                });
+            }
+        });
+
+        let active = {
+            reload: function () {
+                //执行重载
+                table.reload(tableFilter, {page: {curr: 1}, where: getWhere()});
+            }
+        };
+
+        bindEvent('[lay-active]', function () {
+            var type = $(this).attr('lay-active');
+            typeof active[type] !== 'undefined' && active[type]();
+        });
+    })
+    ;
+</script>

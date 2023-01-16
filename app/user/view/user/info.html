@@ -1,0 +1,173 @@
+{extend name="public/base" /}
+
+{block name="main"}
+<div class="container-fluid" menu="user-index">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4>个人信息</h4>
+                </div>
+                <div class="card-body" id="app-body">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="app-body-html">
+    <form id="edit-user-form" onsubmit="return false;">
+        <div class="form-group">
+            <label for="uid">UID</label>
+            <input class="form-control" type="text" id="uid" value="{{ d.id }}" disabled="">
+        </div>
+        <div class="form-group">
+            <label for="username">用户名</label>
+            <input class="form-control" type="text" id="username" value="{{ d.username }}" disabled="">
+        </div>
+        <div class="form-group">
+            <label for="name">姓名</label>
+            <input class="form-control" type="text" id="name" name="name" value="{{ d.name }}">
+        </div>
+        <div class="form-group">
+            <label for="sid">上级ID</label>
+            <input class="form-control" type="text" id="sid" value="{{ d.sid ? d.sid : '无' }}" disabled="">
+        </div>
+        <div class="form-group">
+            <label for="qq">QQ号</label>
+            <div class="input-group">
+                <input class="form-control" type="text" id="qq" value="{{ d.qq || '未绑定' }}">
+                <div class="input-group-btn">
+                    {{# if(d.qq == null){ }}
+                    <button class="btn btn-default" type="button" data-event="bindQQ">绑定QQ</button>
+                    {{# }else{ }}
+                    <button class="btn btn-default" type="button" data-event="untiedQQ">解绑QQ</button>
+                    {{# } }}
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password">密码</label>
+                <input class="form-control" type="text" id="password" name="password" value="">
+                <small class="help-block">空则为不修改</small>
+            </div>
+            <div class="form-group">
+                <label for="create_time">注册时间</label>
+                <input class="form-control" type="text" id="create_time" value="{{ d.create_time }}" disabled="">
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary m-r-5">确 定</button>
+                <button type="button" class="btn btn-default"
+                        onclick="javascript:history.back(-1);return false;">返 回
+                </button>
+            </div>
+    </form>
+</script>
+<script type="text/html" id="bind-qq-html">
+    <div class="container-fluid" style="text-align: center;margin-top: 54px;">
+        <img src="data:image/png;base64,{{ d.data.img }}" style="display: inline-block;">
+        <p style="margin-top: 13px;" id="qrcode-status">
+            请使用QQ手机版扫描二维码
+        </p>
+    </div>
+</script>
+<script>
+    layui.use(['form', 'laytpl', 'util'], function (form, laytpl, util) {
+        helper.__init(function () {
+            helper.__getUserInfo(function (res) {
+                // 模板渲染
+                template('#app-body-html', '#app-body', res.data);
+                // 监听表单事件
+                helper.form('#edit-user-form', function (data) {
+                    data.type = 'edit';
+                    helper.__editUserInfo({
+                        data: data,
+                        type: 'post',
+                    }, function (res) {
+                        layer.msg('修改成功', {time: 1000}, function (index) {
+                            layer.close(index);
+                            helper.__init();
+                        });
+                    })
+                })
+            })
+        });
+
+        util.event('data-event', {
+            // 解绑QQ
+            untiedQQ: function () {
+                layer.confirm('确定要解绑吗？', {
+                    skin: "layui-layer-molv",
+                    btn: ['确定', '取消']
+                }, function () {
+                    helper.__editUserInfo({
+                        data: {type: 'untiedQQ'},
+                        type: 'post',
+                    }, function (res) {
+                        layer.msg('解绑成功', {time: 1000}, function (index) {
+                            layer.close(index);
+                            helper.__init();
+                        });
+                    }, '解绑失败')
+                });
+            },
+            bindQQ: function () {
+                var queryInterval = null,
+                    getQrcode = function (res) {
+                        var WH = helper.getWH();
+                        helper.popup({
+                            title: '绑定QQ',
+                            area: [(WH[0] > 500 ? 500 : WH[0]) + 'px', WH[1]],
+                            id: 'LAY-bind-qq',
+                            success: function (layero, index) {
+                                res.layer_index = index;
+                                // 渲染模板
+                                template('#bind-qq-html', '#LAY-bind-qq', res);
+                                // 二维码查询状态任务
+                                queryQrcodeStatus(index);
+
+                            },
+                            end: function () {
+                                setTimeout(function () {
+                                    queryInterval && clearInterval(queryInterval);
+                                }, 50);
+                            }
+                        });
+                    }, queryQrcodeStatus = function (index) {
+                        queryInterval = setInterval(function () {
+                            helper.__getQrcodeStatus({
+                                success: function (res) {
+                                    if (res.status !== 1) {
+                                        return false;
+                                    }
+
+                                    // 二维码失效
+                                    if (res.data.code === -1) {
+                                        $('#qrcode-status')
+                                            .css('color', 'red')
+                                            .html('<span class="mdi mdi-close-circle-outline" style="font-size: 15px"></span>二维码已失效');
+                                        clearInterval(queryInterval);
+                                    } else if (res.data.code === 2) {
+                                        $('#qrcode-status').css('color', '#14b56f').html('<span class="mdi mdi-checkbox-marked-circle-outline" style="font-size: 15px"></span>扫描成功，请在手机上确认是否授权登录');
+                                        // 登录完成
+                                    } else if (res.data.code === 3) {
+                                        $('#qrcode-status').text('绑定成功，QQ: ' + res.data.msg);
+                                        layer.close(index);
+                                        helper.__init();
+                                        clearInterval(queryInterval);
+                                    } else if (res.data.code === 4) {
+                                        layer.msg('当前QQ已被绑定', {icon: 2, time: 1500});
+                                        layer.close(index);
+                                        helper.__init();
+                                        clearInterval(queryInterval);
+                                    }
+                                }
+                            });
+                        }, 2000);
+                    };
+                // 获取二维码登录地址
+                helper.__getQrcodeUrl(getQrcode);
+            }
+        });
+    });
+</script>
+{/block}

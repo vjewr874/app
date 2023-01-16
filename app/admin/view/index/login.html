@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{$site.title} - {$site.name}</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="https://g.onlinfei.com/layui/css/layui.css" media="all">
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" type="text/css" href="__ADMIN__/login/css/loginStyle.css"/>
+</head>
+<body>
+<div class="layui-container">
+    <div class="admin-login-background">
+        <div class="layui-form login-form">
+            <div class="layui-form">
+                <div class="layui-form-item logo-title">
+                    <h1>后台登录</h1>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-icon layui-icon-username" for="username"></label>
+                    <input type="text" name="username" lay-verify="required|account" placeholder="用户名"
+                           autocomplete="off" class="layui-input" value="">
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-icon layui-icon-password" for="password"></label>
+                    <input type="password" name="password" lay-verify="required|password" placeholder="密码"
+                           autocomplete="off" class="layui-input" value="">
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-icon layui-icon-vercode" for="captcha"></label>
+                    <input type="text" name="captcha" lay-verify="required|captcha" placeholder="图形验证码"
+                           autocomplete="off" class="layui-input verification captcha" value="">
+                    <div class="captcha-img">
+                        <img id="captchaPic" src="{:url('admin_captcha')}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <input type="hidden" class="captcha_url" value="{:url('admin_captcha')}?">
+                    <input type="hidden" class="login_ajax_url" value="{:url('admin_ajax_login')}">
+                    <input type="hidden" class="callback_url" value="{:url('admin')}">
+                    <button class="layui-btn layui-btn-fluid" lay-submit="" lay-filter="login">登 入</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://g.onlinfei.com/jquery/jquery.min.js" charset="utf-8"></script>
+<script src="https://g.onlinfei.com/layui/layui.js" charset="utf-8"></script>
+<script src="https://g.onlinfei.com/jq-module/jquery.particleground.min.js" charset="utf-8"></script>
+<script type="text/javascript" src="__ADMIN__/login/js/login.js"></script>
+</body>
+</html>

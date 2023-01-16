@@ -1,0 +1,253 @@
+<title>{$site.title} - {$site.name}</title>
+<div class="layui-fluid">
+    <div class="layui-card-body" style="padding: 15px;">
+        <form class="layui-form" action="" lay-filter="form-site-setting" onsubmit="return false;" wid100="">
+            <div class="layui-card">
+                <div class="layui-card-body layui-row layui-col-space10" style="padding: 0;">
+                    <div class="layui-tab layui-tab-brief" lay-filter="component-tabs-brief">
+                        <script type="text/html" template lay-url="{:url('admin_ajax_get_site_setting')}"
+                                lay-done="layui.__init()">
+                            <ul class="layui-tab-title">
+                                <li class="layui-this">网站设置</li>
+                                <li class="">域名设置</li>
+                                <li class="">API设置</li>
+                            </ul>
+                            <div class="layui-tab-content">
+                                <div class="layui-tab-item layui-show">
+                                    <fieldset class="layui-elem-field">
+                                        <legend>用户中心</legend>
+                                        <div class="layui-field-box">
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">显示授权数量</label>
+                                                <div class="layui-input-block">
+                                                    <input type="text" name="site_user_auth_number" autocomplete="off"
+                                                           class="layui-input"
+                                                           value="{{ d.data.site_user_auth_number || 15 }}">
+                                                    <div class="layui-form-mid layui-word-aux">用户中心首页显示授权条数，范围10 - 90
+                                                        条
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">显示公告数量</label>
+                                                <div class="layui-input-block">
+                                                    <input type="text" name="site_user_notice_number" autocomplete="off"
+                                                           class="layui-input"
+                                                           value="{{ d.data.site_user_notice_number || 15 }}">
+                                                    <div class="layui-form-mid layui-word-aux">用户中心首页显示公告数量，范围10 - 90
+                                                        条
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                    <fieldset class="layui-elem-field">
+                                        <legend>网站信息</legend>
+                                        <div class="layui-field-box">
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">网站LOGO</label>
+                                                <div class="layui-input-block">
+                                                    <input type="text" name="site_logo" id="image-upload-value"
+                                                           autocomplete="off" class="layui-input"
+                                                           value="{{ d.data.site_logo }}">
+                                                    <button type="button" class="layui-btn layui-btn-danger"
+                                                            id="image-upload"
+                                                            style="margin-top: 5px;">
+                                                        <i class="layui-icon"></i>上传LOGO
+                                                    </button>
+                                                    <input class="layui-upload-file" type="file">
+                                                </div>
+                                            </div>
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">网站名称</label>
+                                                <div class="layui-input-block">
+                                                    <input type="text" name="site_name" autocomplete="off"
+                                                           class="layui-input" value="{{ d.data.site_name }}">
+                                                </div>
+                                            </div>
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">网站首页名称</label>
+                                                <div class="layui-input-block">
+                                                    <input type="text" name="site_index_title" autocomplete="off"
+                                                           class="layui-input" value="{{ d.data.site_index_title }}">
+                                                </div>
+                                            </div>
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">网站关键词</label>
+                                                <div class="layui-input-block">
+                                                    <input type="text" name="site_keywords" autocomplete="off"
+                                                           class="layui-input" value="{{ d.data.site_keywords}}">
+                                                </div>
+                                            </div>
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">网站描述</label>
+                                                <div class="layui-input-block">
+                                                    <input type="text" name="site_description" autocomplete="off"
+                                                           class="layui-input" value="{{ d.data.site_description}}">
+                                                </div>
+                                            </div>
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">ICP备案信息</label>
+                                                <div class="layui-input-block">
+                                                    <input type="text" name="icp_number" autocomplete="off"
+                                                           class="layui-input" value="{{ d.data.icp_number}}">
+                                                </div>
+                                            </div>
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">版权信息</label>
+                                                <div class="layui-input-block">
+                                                    <textarea class="layui-textarea" name="site_copyright">{{ d.data.site_copyright || '' }}</textarea>
+                                                </div>
+                                            </div>
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">站点统计代码</label>
+                                                <div class="layui-input-block">
+                                                    <textarea class="layui-textarea" name="site_statis">{{ d.data.site_statis || '' }}</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </div>
+                                <div class="layui-tab-item">
+                                    <blockquote class="layui-elem-quote">建议后台设置单独的域名, 多个域名使用“,”(小写逗号)隔开，系统默认使用第一个域名做跳转
+                                    </blockquote>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">后台域名</label>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="admin_domain" autocomplete="off"
+                                                   class="layui-input" value="{{ d.data.admin_domain || '' }}">
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">用户中心域名</label>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="user_domain" autocomplete="off"
+                                                   class="layui-input" value="{{ d.data.user_domain || '' }}">
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">首页域名</label>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="index_domain" autocomplete="off"
+                                                   class="layui-input" value="{{ d.data.index_domain || '' }}">
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">API域名</label>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="api_domain" autocomplete="off"
+                                                   class="layui-input" value="{{ d.data.api_domain || '' }}">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-tab-item">
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">加密通信</label>
+                                        <div class="layui-input-block">
+                                            <input type="checkbox" name="api_encrypt" lay-skin="switch" lay-text="开启|关闭"
+                                                   {{# if (d.data.api_encrypt== 1){ }} checked="" {{# } }}>
+                                        </div>
+                                        <div class="layui-form-mid layui-word-aux">开启后会加密Data参数值</div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">自动识别加密</label>
+                                        <div class="layui-input-block">
+                                            <input type="checkbox" name="api_auto_encrypt" lay-skin="switch"
+                                                   lay-text="开启|关闭"
+                                                   {{# if (d.data.api_auto_encrypt== 1){ }} checked="" {{# } }}>
+                                        </div>
+                                        <div class="layui-form-mid layui-word-aux">开启后会根据接口传入的encrypt参数识别明文跟密文</div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">记录查询日志</label>
+                                        <div class="layui-input-block">
+                                            <input type="checkbox" name="api_log" lay-skin="switch" lay-text="开启|关闭" {{#
+                                                   if (d.data.api_log== 1){ }} checked="" {{# } }}>
+                                        </div>
+                                        <div class="layui-form-mid layui-word-aux">开启后部分API被调用会写入日志</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </script>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-card">
+                <div class="layui-card-header">提交</div>
+                <div class="layui-card-body layui-row layui-col-space10">
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button class="layui-btn" lay-submit="" lay-filter="form-site-setting-submit">立即提交
+                            </button>
+                            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    layui.__init = function () {
+        layui.use(['admin', 'upload', 'form'], function () {
+            let admin = layui.admin,
+                upload = layui.upload,
+                form = layui.form,
+                loadMsg = null;
+
+            upload.render({
+                elem: '#image-upload',
+                url: '{:url("admin_ajax_upload")}',
+                data: {type: 'public'},
+                before: function (obj) {
+                    loadMsg = layer.load();
+                },
+                done: function (res) {
+                    layer.close(loadMsg);
+                    if (res.status === 1) {
+                        layer.msg('上传成功', {icon: 1});
+                        $('#image-upload-value').val(res.complete);
+                    } else {
+                        layer.msg(res.info, {icon: 2});
+                    }
+                },
+                error: function () {
+                    layer.close(loadMsg);
+                    layer.msg('服务器繁忙，请稍后再试!', {icon: 2});
+                }
+            });
+
+            form.render();
+
+            form.on('submit(form-site-setting-submit)', function (obj) {
+                let data = obj.field,
+                    index = layer.load(0, {shade: false});
+
+                data.api_encrypt = data.api_encrypt ? 1 : 0;
+                data.api_auto_encrypt = data.api_auto_encrypt ? 1 : 0;
+                data.api_log = data.api_log ? 1 : 0;
+
+                $.ajax({
+                    url: '{:url('admin_ajax_edit_site_setting')}',
+                    type: 'post',
+                    dataType: 'json',
+                    data: data,
+                }).done(function (data) {
+                    layer.close(index);
+
+                    if (data.status === 1) {
+                        admin.alert.success('保存成功', {}, function (index) {
+                            layer.close(index);
+                            layui.index.render();
+                        });
+                    } else {
+                        admin.alert.error(data.info);
+                    }
+                }).fail(function () {
+                    layer.close(index);
+                    admin.alert.error('服务器繁忙，请稍后再试！');
+                });
+            });
+        });
+    }
+</script>

@@ -1,0 +1,168 @@
+<title>{$site.title} - {$site.name}</title>
+{if empty($data)}
+<script>
+    layui.use('admin', function (admin) {
+        admin.alert.error('应用信息不存在', {}, function (index) {
+            layer.close(index);
+            window.history.go(-1);
+        });
+    });
+</script>
+{else}
+<style>
+    .click_return {
+        margin-left: 5px;
+        margin-top: -4px;
+    }
+</style>
+<div class="layui-fluid">
+    <div class="layui-card-body" style="padding: 15px;">
+        <form class="layui-form" action="" lay-filter="form-app-version-release" wid100 onsubmit="return false;">
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    应用版本发布
+                    <a class="layui-btn layui-btn-primary layui-btn-xs event_comeback"><i
+                            class="layui-icon layui-icon-arrowleft" style="position: initial;"></i>返回</a>
+                </div>
+                <div class="layui-card-body layui-row layui-col-space10">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">应用名称</label>
+                        <div class="layui-input-block">
+                            <input type="text" value="{$data.name} (ID: {$data.id})" class="layui-input"
+                                   disabled="">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">版本号</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="version" lay-verify="required" autocomplete="off"
+                                   class="layui-input" value="">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">更新内容</label>
+                        <div class="layui-input-block">
+                            <textarea name="content" lay-verify="required" autocomplete="off"
+                                      class="layui-input" style="height: 122px;"></textarea>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">上传更新包</label>
+                        <div class="layui-input-inline">
+
+                            <button type="button" class="layui-btn layui-btn-primary" id="update_file_show"><i
+                                    class="layui-icon"></i>上传文件(ZIP)
+                            </button>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">上传完整包</label>
+                        <div class="layui-input-inline">
+
+                            <button type="button" class="layui-btn layui-btn-primary" id="complete_file_show"><i
+                                    class="layui-icon"></i>上传文件(ZIP)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-card">
+                <div class="layui-card-header">提交</div>
+                <div class="layui-card-body layui-row layui-col-space10">
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <input type="hidden" name="appid" value="{$data.id}">
+                            <input type="hidden" name="update_file" value="">
+                            <input type="hidden" name="complete_file" value="">
+                            <button class="layui-btn" lay-submit="" lay-filter="form-app-version-release-submit">立即提交
+                            </button>
+                            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    layui.use(['admin', 'form', 'laydate', 'upload'], function () {
+        let $ = layui.$,
+            admin = layui.admin,
+            layer = layui.layer,
+            form = layui.form,
+            upload = layui.upload;
+
+        form.render(null, 'form-app-version-release');
+
+        upload.render({
+            elem: '#update_file_show',
+            url: "{:url('admin_ajax_upload')}",
+            accept: 'file',
+            exts: 'zip',
+            before: function () {
+                layer.load();
+            },
+            done: function (res) {
+                layer.closeAll('loading');
+                $(this.elem).text('已上传');
+                $('[name=update_file]').val(res.data);
+            },
+            error: function () {
+                layer.closeAll('loading');
+            }
+        });
+        upload.render({
+            elem: '#complete_file_show',
+            url: "{:url('admin_ajax_upload')}",
+            accept: 'file',
+            exts: 'zip',
+            before: function () {
+                layer.load();
+            },
+            done: function (res) {
+                layer.closeAll('loading');
+                $(this.elem).text('已上传');
+                $('[name=complete_file]').val(res.data);
+            },
+            error: function () {
+                layer.closeAll('loading');
+            }
+        });
+
+
+        /* 监听表单提交 */
+        form.on('submit(form-app-version-release-submit)', function (data) {
+            data = data.field;
+            if ('' === $.trim(data.update_file)) {
+                return admin.alert.error('请上传更新文件压缩包');
+            }
+            if ('' === $.trim(data.complete_file)) {
+                return admin.alert.error('请上传完整文件压缩包');
+            }
+
+            var index = layer.load(0, {shade: false});
+            $.ajax({
+                url: '{:url('admin_ajax_app_version_release')}',
+                type: 'post',
+                dataType: 'json',
+                data: data,
+            }).done(function (data) {
+                layer.close(index);
+
+                if (data.status === 1) {
+                    admin.alert.success('发布成功', {}, function (index) {
+                        layer.close(index);
+                        window.history.go(-1);
+                    });
+                } else {
+                    admin.alert.error(data.info);
+                }
+            }).fail(function () {
+                layer.close(index);
+                admin.alert.error('服务器繁忙，请稍后再试！');
+            });
+        });
+    });
+</script>
+{/if}

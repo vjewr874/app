@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <title>{$site.title} - {$site.name}</title>
+    <link href="https://g.onlinfei.com/lyear/css/??bootstrap.min.css,materialdesignicons.min.css,style.min.css"
+          rel="stylesheet">
+    <script type="text/javascript"
+            src="https://g.onlinfei.com/lyear/js/??jquery.min.js,bootstrap.min.js,perfect-scrollbar.min.js,main.min.js?v1"></script>
+    <script type="text/javascript" src="https://g.onlinfei.com/lyear/js/jq-paginator.min.js?v4"></script>
+    <!--<script type="text/javascript" src="https://g.onlinfei.com/lyear/js/??jquery.min.js,bootstrap.min.js,perfect-scrollbar.min.js,main.min.js,jq-paginator.min.js"></script>-->
+    <script src="https://g.onlinfei.com/cloud-admin/layui-v2.4.5/layui.js?0.48721231644"></script>
+    <style>
+        li.nav-item:hover {
+            background: #0000000f;
+        }
+
+        th {
+            border-bottom: none !important;
+        }
+
+        .so-form {
+            margin-top: 19px;
+            margin-bottom: 5px;
+        }
+
+        .pagination {
+            margin: 0;
+        }
+
+        .layui-layer-admin .layui-layer-title {
+            border: none;
+            background-color: #333;
+            color: #fff;
+        }
+
+        .p-l-0 {
+            padding-left: 0;
+        }
+
+        .p-r-0 {
+            padding-right: 0;
+        }
+
+        .blockquote-success {
+            border-left: 5px solid #15c377;
+        }
+
+        i[close] {
+            position: absolute;
+            padding: 5px;
+            right: 10px;
+            top: 0px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 22px;
+        }
+
+        @media (max-width: 768px) {
+            .so-form a {
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+    <script>
+        var authConfig = {
+            ajaxGetAppUrl: "{:url('user_ajax_get_app')}",
+            ajaxGetAuthListUrl: "{:url('user_ajax_get_auth_list')}",
+            ajaxEditAuthUrl: "{:url('user_ajax_edit_auth')}",
+            ajaxEditAuthStatusUrl: "{:url('user_ajax_edit_auth_status')}",
+            ajaxDeleteAuthUrl: "{:url('user_ajax_delete_auth')}",
+            ajaxCreateAuthUrl: "{:url('user_ajax_create_auth')}",
+            ajaxGetCardListUrl: "{:url('user_ajax_get_card_list')}",
+            ajaxCreateCardUrl: "{:url('user_ajax_create_card')}",
+            ajaxEditCardUrl: "{:url('user_ajax_edit_card')}",
+            ajaxExportCardUrl: "{:url('user_ajax_export_card')}",
+            ajaxDeleteCardUrl: "{:url('user_ajax_delete_card')}",
+            ajaxGetUserListUrl: "{:url('user_ajax_get_user_list')}",
+            ajaxCreateUserUrl: "{:url('user_ajax_create_user')}",
+            ajaxEditUserUrl: "{:url('user_ajax_edit_user')}",
+            ajaxEditUserStatusUrl: "{:url('user_ajax_edit_user_status')}",
+            ajaxDeleteUserUrl: "{:url('user_ajax_delete_user')}",
+            ajaxDownloadAuthFileUrl: "{:url('user_ajax_download_auth_file')}",
+            ajaxGetUserInfoUrl: "{:url('user_ajax_get_user_info')}",
+            ajaxEditUserInfoUrl: "{:url('user_ajax_edit_user_info')}",
+            ajaxGetQrcodeUrl: "{:url('user_ajax_get_qrcode_url')}",
+            ajaxGetQrcodeStatus: "{:url('user_ajax_get_qrcode_status')}",
+        };
+        var template = function (template, view, data) {
+            var getTpl = layui.$(template).html();
+            layui.laytpl(getTpl).render(data, function (html) {
+                layui.$(view).html(html);
+            });
+        }, appendzero = function (obj) {
+            if (obj < 10) return "0" + "" + obj;
+            else return obj;
+        };
+
+        $.fn.serializeObject = function () {
+            var o = {};
+            var a = this.serializeArray();
+            $.each(a, function () {
+                if (o[this.name] !== undefined) {
+                    if (!o[this.name].push) {
+                        o[this.name] = [o[this.name]];
+                    }
+                    o[this.name].push(this.value || '');
+                } else {
+                    o[this.name] = this.value || '';
+                }
+            });
+            return o;
+        };
+
+        var helper = {
+            __params: {
+                pageNumber: 0,
+                formList: {},
+            },
+            __initFunction: null,
+            __init: function () {
+                var callback = arguments[0] || false;
+                if (!callback && typeof this.__initFunction === 'function') {
+                    return this.__initFunction();
+                }
+
+                if (typeof callback === 'function') {
+                    this.__initFunction = callback;
+                    callback();
+                }
+            },
+            __getAppList: function () {
+                var params = arguments.length === 2 ? arguments[0] : {},
+                    callback = arguments.length === 2 ? arguments[1] : arguments[0];
+
+                this.__ajax(authConfig.ajaxGetAppUrl, params, callback, '获取应用列表失败')
+            },
+            __getAuthList: function (data, callback) {
+                this.__ajax(authConfig.ajaxGetAuthListUrl, data, callback, '获取授权列表失败')
+            },
+            __editAuthStatus: function () {
+                var _this = this,
+                    status = typeof arguments[0] === 'undefined' ? 1 : arguments[0],
+                    id = this.getCheckboxVal();
+
+                if (id.length < 1) {
+                    return layer.msg('请选择要操作的数据行');
+                }
+
+                this.__ajax(authConfig.ajaxEditAuthStatusUrl, {
+                    data: _this.loadMsg({id: id, status: status}),
+                    type: 'post'
+                }, function (res) {
+                    layer.msg(res.info, {time: 1000}, function () {
+                        _this.__init();
+                    });
+                }, '修改授权状态失败')
+            },
+            __deleteAuth: function () {
+                var id = arguments[0] || this.getCheckboxVal(),
+                    _this = this;
+                if (id.length < 1) {
+                    return layer.msg('请选择要删除的数据行');
+                }
+
+                layer.confirm('确定要删除选择的' + id.length + '条数据？此操作将不可逆转!', {
+                    skin: "layui-layer-molv",
+                    btn: ['确定', '取消']
+                }, function () {
+                    _this.__ajax(authConfig.ajaxDeleteAuthUrl, _this.loadMsg({
+                        data: {id: id},
+                        type: 'post'
+                    }), function (res) {
+                        layer.msg(res.info, {time: 1000}, function () {
+                            _this.__init();
+                        });
+                    }, '删除授权失败')
+                });
+            },
+            __deleteCard: function () {
+                var id = arguments[0] || this.getCheckboxVal(),
+                    _this = this;
+                if (id.length < 1) {
+                    return layer.msg('请选择要删除的数据行');
+                }
+
+                layer.confirm('确定要删除选择的' + id.length + '条数据？此操作将不可逆转!', {
+                    skin: "layui-layer-molv",
+                    btn: ['确定', '取消']
+                }, function () {
+                    _this.__ajax(authConfig.ajaxDeleteCardUrl, _this.loadMsg({
+                        data: {id: id},
+                        type: 'post'
+                    }), function (res) {
+                        layer.msg(res.info, {time: 1000}, function () {
+                            _this.__init();
+                        });
+                    }, '删除卡密失败')
+                });
+            },
+            __getCardList: function (data, callback) {
+                this.__ajax(authConfig.ajaxGetCardListUrl, data, callback, '获取卡密列表失败')
+            },
+            __getUserInfo: function (callback) {
+                this.__ajax(authConfig.ajaxGetUserInfoUrl, helper.loadMsg({}), callback, '获取用户信息失败')
+            },
+            __getUserList: function (data, callback) {
+                this.__ajax(authConfig.ajaxGetUserListUrl, data, callback, '获取用户列表失败')
+            },
+            __editUserStatus: function () {
+                var _this = this,
+                    status = typeof arguments[0] === 'undefined' ? 1 : arguments[0],
+                    id = this.getCheckboxVal();
+
+                if (id.length < 1) {
+                    return layer.msg('请选择要操作的数据行');
+                }
+
+                this.__ajax(authConfig.ajaxEditUserStatusUrl, {
+                    data: _this.loadMsg({id: id, status: status}),
+                    type: 'post'
+                }, function (res) {
+                    layer.msg(res.info, {time: 1000}, function () {
+                        _this.__init();
+                    });
+                }, '修改授权状态失败')
+            },
+            __deleteUser: function () {
+                var id = arguments[0] || this.getCheckboxVal(),
+                    _this = this;
+                if (id.length < 1) {
+                    return layer.msg('请选择要删除的数据行');
+                }
+
+                layer.confirm('确定要删除选择的' + id.length + '条数据？此操作将不可逆转!', {
+                    skin: "layui-layer-molv",
+                    btn: ['确定', '取消']
+                }, function () {
+                    _this.__ajax(authConfig.ajaxDeleteUserUrl, _this.loadMsg({
+                        data: {id: id},
+                        type: 'post'
+                    }), function (res) {
+                        layer.msg(res.info, {time: 1000}, function () {
+                            _this.__init();
+                        });
+                    }, '删除卡密失败')
+                });
+            },
+            __editUserInfo: function () {
+                var data = arguments[0],
+                    callback = arguments[1],
+                    errorMsg = arguments[2] || '修改用户信息失败';
+                this.__ajax(authConfig.ajaxEditUserInfoUrl, helper.loadMsg(data), callback, errorMsg)
+            },
+            __getQrcodeUrl: function (callback) {
+                this.__ajax(authConfig.ajaxGetQrcodeUrl, helper.loadMsg({}), callback, '获取QQ登录地址失败')
+            },
+            __getQrcodeStatus: function (data, callback) {
+                this.__ajax(authConfig.ajaxGetQrcodeStatus, data, callback, '获取扫码状态失败')
+            },
+            loadMsg: function (params) {
+                var loadMsg = layer.load();
+                return $.extend(params, {
+                    complete: function () {
+                        layer.close(loadMsg);
+                    },
+                });
+            },
+            __ajax: function () {
+                var _this = this,
+                    url = arguments[0] || '',
+                    params = arguments[1] || {},
+                    callback = arguments[2] || false,
+                    errorMsg = arguments[3] || '服务器繁忙, 请稍后再试',
+                    completes = params.complete;
+
+                delete params.complete;
+                params = $.extend({
+                    url: url,
+                    type: 'get',
+                    dataType: 'json',
+                    success: function (res) {
+                        if (res.status) {
+                            if (typeof callback === 'function') {
+                                return callback(res)
+                            }
+                        } else {
+                            errorMsg && _this.__error(errorMsg);
+                        }
+                    },
+                    error: function () {
+                        errorMsg && _this.__error(errorMsg);
+                    },
+                    complete: function () {
+                        typeof completes === 'function' && completes();
+                    }
+                }, params);
+
+                $.ajax(params);
+            },
+            __page: function () {
+                var _this = this,
+                    id = arguments[0] || '',
+                    params = arguments[1] || {},
+                    callback = arguments[2] || false;
+
+                params = $.extend({
+                    totalCounts: 1,
+                    pageSize: 10,
+                    visiblePages: 8,
+                    currentPage: 1,
+                    first: '<li class="first"><a href="javascript:void(0);" style="margin-left: 0px;">首页</a></li>',
+                    prev: '<li class="prev"><a href="javascript:void(0);"><i class="arrow arrow2"><\/i>上一页<\/a><\/li>',
+                    next: '<li class="next"><a href="javascript:void(0);">下一页<i class="arrow arrow3"><\/i><\/a><\/li>',
+                    last: '<li class="last"><a href="javascript:void(0);">末页<\/a><\/li>',
+                    page: '<li class="page"><a href="javascript:void(0);">{{page}}<\/a><\/li>',
+
+                    onPageChange: function (num, type) {
+                        if (type === 'init') {
+                            return true;
+                        }
+                        _this.set('pageNumber', num);
+                        window.location.hash = '/page/' + num;
+                        typeof callback === 'function' && callback(num, type);
+                    }
+                }, params);
+
+                if (typeof params.count !== 'undefined') {
+                    params.totalCounts = parseInt(params.count < 1 ? 1 : params.count);
+                    delete params.count;
+                }
+                if (typeof params.curr !== 'undefined') {
+                    params.currentPage = parseInt(params.curr < 1 ? 1 : params.curr);
+                    delete params.curr;
+                }
+                return $('#page-ul').jqPaginator(params);
+            },
+            __error: function (info) {
+                layer.msg(info, {icon: 2, time: 1500});
+            },
+            popup: function (params) {
+                var success = params.success,
+                    skin = params.skin;
+                return delete params.success, delete params.skin, layer.open($.extend({
+                    type: 1,
+                    title: "提示",
+                    content: "",
+                    id: "LAY-system-view-popup",
+                    skin: "layui-layer-molv" + (skin ? " " + skin : ""),
+                    shadeClose: !0,
+                    closeBtn: !1,
+                    success: function (e, r) {
+                        var o = $('<i class="mdi mdi-close" close></i>');
+                        e.append(o), o.on("click", function () {
+                            layer.close(r)
+                        }), "function" == typeof success && success.apply(this, arguments)
+                    }
+                }, params))
+            },
+            getJson: function (id) {
+                return JSON.parse(decodeURIComponent($(id).data('json')));
+            },
+            form: function (id, callback) {
+                var _this = this;
+                if (typeof this.__params.formList[id] !== 'undefined') {
+                    this.__params.formList[id] = callback;
+                    return true;
+                }
+                this.__params.formList[id] = callback;
+                $(document).on('submit', id, function () {
+                    var data = $(this).serializeObject();
+                    _this.__params.formList[id].apply(this, [data]);
+                });
+            },
+            getCheckboxVal: function () {
+                var id = arguments[0] || '.lyear-checkbox>input[type=checkbox]:checked:not(#check-all)',
+                    arr = [];
+                $(id).each(function () {
+                    arr.push($(this).val());
+                });
+                return arr;
+            },
+            getWH: function () {
+                var width = $('body').width();
+                if (width > 679) {
+                    var height = 400 + 'px'
+                } else {
+                    height = '100%'
+                }
+                if (width - 400 > 500) {
+                    width = width / 2
+                }
+                return [width, height];
+            },
+            inArray: function () {
+                var val = arguments[0] || '',
+                    arr = arguments[1] || [];
+                return arr.some(function (v) {
+                    return val === v;
+                })
+            },
+            get: function (name) {
+                return typeof this.__params[name] === 'undefined' ? null : this.__params[name];
+            },
+            set: function (name, value) {
+                return this.__params[name] = value;
+            }
+        }
+    </script>
+</head>
+
+<body>
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+        {include file="public/header"/}
+        <!--页面主要内容-->
+        <main class="lyear-layout-content">
+            {block name="main"}{/block}
+        </main>
+        <!--End 页面主要内容-->
+        {block name="script"}{/block}
+        {include file="public/footer"/}
+    </div>
+</div>
+<script type="text/html" id="app-list-html">
+    <select class="form-control" id="soAppId" name="appid">
+        <option value="">选择应用</option>
+        {{# $.each(d,function (index,item){ }}
+        <option value="{{ item.id }}" {{# if(typeof d.optionId !==
+        '' && item.id == d.optionId){ }}selected=""{{# } }}>
+        {{ item.name }}
+        </option>
+        {{# }); }}
+    </select>
+</script>
+<script type="text/html" id="app-list-group-html">
+    {{# $.each(d.data,function (index,item){ }}
+    {{# if (typeof d.agent[item.id] !== 'undefined' && d.agent[item.id].length >= 1){ }}
+    <div class="form-group">
+        <label>应用-{{ item.name }}(ID: {{ item.id }})</label>
+        <select class="form-control" name="auth[{{ item.id }}]">
+            <option value="">不开通</option>
+            {{# $.each(d.agent[item.id], function (i, v){ }}
+            <option value="{{ i }}" {{# if(typeof d.optionId !==
+            'undefined' && typeof d.optionId[item.id] !== 'undefined' && d.optionId[item.id] == i){ }}selected=""{{# }
+            }}>{{ v.name }}</option>
+            {{# }); }}
+        </select>
+    </div>
+    {{# } }}
+    {{# }); }}
+</script>
+</body>
+</html>

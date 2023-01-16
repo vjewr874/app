@@ -1,0 +1,78 @@
+<title>{$site.title} - {$site.name}</title>
+<div class="layui-fluid" id="VIEW-list-table">
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">修改密码</div>
+                    <div class="layui-card-body" pad15="">
+
+                        <div class="layui-form" lay-filter="self-edit-form">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">当前密码</label>
+                                <div class="layui-input-inline">
+                                    <input type="password" name="oldPassword" lay-verify="required" lay-vertype="tips"
+                                           class="layui-input layui-form-danger">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">新密码</label>
+                                <div class="layui-input-inline">
+                                    <input type="password" name="password" id="password" lay-verify="required"
+                                           lay-vertype="tips"
+                                           autocomplete="off" id="LAY_password" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">确认新密码</label>
+                                <div class="layui-input-inline">
+                                    <input type="password" lay-verify="rePassword" lay-vertype="tips"
+                                           autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button class="layui-btn" lay-submit="" lay-filter="self-edit-form-submit">确认修改
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    layui.use(['admin', 'form', 'jquery'], function (admin, form, $) {
+
+        form.render(null, 'self-edit-form');
+
+        form.verify({
+            rePassword: function (t) {
+                if (t !== $("#password").val()) return "两次密码输入不一致"
+            }
+        })
+
+        form.on('submit(self-edit-form-submit)', function (obj) {
+            let data = obj.field;
+            let loadMsg = layer.load();
+
+            $.post("{:url('admin_ajax_self_edit')}", data, function (res) {
+                layer.close(loadMsg);
+                if (res.status) {
+                    admin.alert.success('修改成功', {}, function (index) {
+                        layer.close(index);
+                        window.location.reload();
+                    });
+                } else {
+                    admin.alert.error(res.info);
+                }
+            }, 'json').fail(function () {
+                layer.close(loadMsg);
+                admin.alert.error('系统繁忙, 请稍后再试');
+            });
+        });
+    });
+</script>

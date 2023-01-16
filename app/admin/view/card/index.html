@@ -1,0 +1,364 @@
+<title>{$site.title} - {$site.name}</title>
+<div class="layui-fluid" id="VIEW-list-table">
+    <div class="layui-row layui-col-space10">
+        <div class="layui-col-md10">
+            <div class="layui-card">
+                <div class="layui-card-body nepadmin-table-full layer-event">
+                    <table id="card-list-table" lay-filter="card-list-table"></table>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md2">
+            <div class="layui-card">
+                <div class="layui-card-header">筛选数据</div>
+                <div class="layui-card-body">
+                    <script type="text/html" template lay-url="{:url('admin_ajax_get_app')}"
+                            lay-done="layui.form.render();">
+                        <form class="layui-row layui-col-space10 layui-form table-reload-btn">
+                            <div class="layui-col-md12 layui-col-xs6">
+                                <select id="so-appId" lay-search="">
+                                    <option value="">选择应用</option>
+                                    {{# layui.each(d.data, function (index, item){ }}
+                                    <option value="{{ item.id }}">{{ item.name }}</option>
+                                    {{# }); }}
+                                </select>
+                            </div>
+                            <div class="layui-col-md12 layui-col-xs6">
+                                <input type="text" class="layui-input" id="so-createId" placeholder="创建用户ID">
+                            </div>
+                            <div class="layui-col-md12 layui-col-xs6">
+                                <select id="so-status">
+                                    <option value="">状态</option>
+                                    <option value="1">未使用</option>
+                                    <option value="0">已使用</option>
+                                </select>
+                            </div>
+                            <div class="layui-col-md12 layui-col-xs12">
+                                <div class="layui-row layui-col-space10">
+                                    <div class="layui-col-xs6">
+                                        <div class="layui-btn layui-btn-sm layui-btn-fluid" lay-active="reload">筛选</div>
+                                    </div>
+                                    <div class="layui-col-xs6">
+                                        <button type="reset"
+                                                class="layui-btn layui-btn-sm layui-btn-fluid layui-btn-primary">
+                                            重置
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </script>
+                </div>
+            </div>
+
+<!--            <div class="layui-card nepadmin-font-12">-->
+            <!--                <div class="layui-card-header">-->
+            <!--                    <i class="layui-icon">&#xe78c;</i> 帮助中心-->
+            <!--                </div>-->
+            <!--                <div class="layui-card-body">-->
+            <!--                    <p>商品在出售中列表找不到？</p>-->
+            <!--                    <p class="nepadmin-c-gray">商品售罄库存为0，在已售罄列表中，提醒您该添加库存了。待付款订单也会占据库存，其超时关闭后库存才会释放。</p>-->
+            <!--                    <hr/>-->
+            <!--                    <p>-->
+            <!--                        <a>如何新建／发布商品？</a>-->
+            <!--                    </p>-->
+            <!--                    <p>-->
+            <!--                        <a>如何管理商品？</a>-->
+            <!--                    </p>-->
+            <!--                    <p>-->
+            <!--                        <a>商品如何排序？</a>-->
+            <!--                    </p>-->
+            <!--                    <p>-->
+            <!--                        <a>商品销量找不到对应的订单？</a>-->
+            <!--                    </p>-->
+            <!--                    <p>-->
+            <!--                        <a>商品二维码使用说明</a>-->
+            <!--                    </p>-->
+            <!--                    <p>-->
+            <!--                        <a>商品可以设置用积分兑换吗？</a>-->
+            <!--                    </p>-->
+            <!--                </div>-->
+            <!--            </div>-->
+
+        </div>
+    </div>
+</div>
+<script type="text/html" id="card-list-toolbar">
+    <div class="layui-btn-container">
+        <div class="layui-btn layui-btn-sm" lay-event="create">生成卡密</div>
+        <div class="layui-btn layui-btn-sm layui-btn-primary" lay-event="del">删除</div>
+    </div>
+</script>
+<script type="text/html" id="TPL-card-list-table-status">
+    {{#
+    var status = [
+    {title:'已使用',color:'red'},
+    {title:'未使用',color:'green'}
+    ][d.status];
+    }}
+    <span class="layui-badge layui-bg-{{status.color}}">{{ status.title }}</span>
+</script>
+<script type="text/html" id="TPL-card-list-table-operating">
+    <a lay-event="copy" class="layui-btn layui-btn-xs">
+        复制
+    </a>
+    <a lay-event="edit" class="layui-btn layui-btn-xs layui-btn-warm">
+        编辑
+    </a>
+</script>
+<script type="text/html" id="card-edit-html">
+    <div class="layui-form" lay-filter="card-edit-form" style="padding: 20px 0 0 0;">
+        <div class="layui-form-item">
+            <label class="layui-form-label">面值天数</label>
+            <div class="layui-input-block">
+                <input type="text" name="day" value="{{ d.day }}" lay-verify="number"
+                       placeholder="请输入面值天数" autocomplete="off" class="layui-input">
+                <div class="layui-form-mid layui-word-aux">天数为0时代表永久, 建议为0-5000</div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">到期时间</label>
+            <div class="layui-input-block">
+                <input type="text" name="expire_time"
+                       value="{{ d.expire_time ? layui.util.toDateString(d.expire_time * 1000, 'yyyy-MM-dd HH:mm:ss') : 0 }}"
+                       placeholder="卡密到期时间" autocomplete="off"
+                       class="layui-input">
+                <div class="layui-form-mid layui-word-aux">到期时间为0时代表永不失效</div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <div class="layui-footer">
+                    <input type="hidden" name="id" value="{{ d.id }}">
+                    <button class="layui-btn" lay-submit="" lay-filter="card-edit-form-submit">立即提交</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<script>
+    layui.use(['admin', 'table', 'form', 'jquery', 'laydate', 'view', 'util'], function (admin, table, form, $) {
+        let tableFilter = 'card-list-table',
+            _cur_page = 0,
+            util = layui.util,
+            getWhere = function () {
+                return {
+                    soAppId: $('#so-appId').val(),
+                    soCreateId: $('#so-createId').val(),
+                    status: $('#so-status').val()
+                }
+            }, getId = function (data) {
+                if (data.length < 1) {
+                    admin.alert.error('请先选择数据');
+                    return false;
+                }
+                let id = new Array();
+                $.each(data, function (index, val) {
+                    id.push(val.id);
+                });
+                return id
+            }, copyToClipboard = function (text, on_done) {
+                let textArea = document.createElement("textarea");
+                textArea.style.position = 'fixed';
+                textArea.style.top = '0';
+                textArea.style.left = '0';
+                textArea.style.width = '2em';
+                textArea.style.height = '2em';
+                textArea.style.padding = '0';
+                textArea.style.border = 'none';
+                textArea.style.outline = 'none';
+                textArea.style.boxShadow = 'none';
+                textArea.style.background = 'transparent';
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+
+                try {
+                    let successful = document.execCommand('copy');
+                    let msg = successful ? '成功复制到剪贴板' : '该浏览器不支持点击复制到剪贴板';
+                    if (on_done) {
+                        on_done(msg);
+                    } else {
+                        alert(msg);
+                    }
+
+                } catch (err) {
+                    let msg = '该浏览器不支持点击复制到剪贴板';
+                    if (on_done) {
+                        on_done(msg);
+                    } else {
+                        alert(msg);
+                    }
+                }
+
+                document.body.removeChild(textArea);
+            }, saveCardNumberData = function (formData, formIndex) {
+                let index = layer.load(0, {shade: false});
+                $.ajax({
+                    url: '{:url('admin_ajax_card_edit')}',
+                    type: 'post',
+                    dataType: 'json',
+                    data: formData,
+                }).done(function (data) {
+                    layer.close(index);
+
+                    if (data.status === 1) {
+                        admin.alert.success('保存成功', {}, function (index) {
+                            layer.close(index);
+                            layer.close(formIndex);
+                            active.reload()
+                        });
+                    } else {
+                        admin.alert.error(data.info);
+                    }
+                }).fail(function () {
+                    layer.close(index);
+                    admin.alert.error('服务器繁忙，请稍后再试！');
+                });
+            };
+
+        form.render();
+        table.render({
+            elem: '#' + tableFilter,
+            url: '{:url('admin_ajax_get_card_list')}',
+            toolbar: '#card-list-toolbar',
+            title: '卡密列表',
+            height: 'full-165',
+            cols: [[
+                {type: 'checkbox'},
+                {title: 'ID', field: 'id', hide: true},
+                {title: '应用ID', field: 'appid', hide: true},
+                {
+                    title: '应用名称',
+                    field: 'appName',
+                    templet: function (d) {
+                        try {
+                            return d.get_app_info.name + ' (ID: ' + d.get_app_info.id + ')';
+                        } catch (e) {
+                            return '--';
+                        }
+                    },
+                    minWidth: 170
+                },
+                {title: '卡号', field: 'card_number', minWidth: 200},
+                {
+                    title: '面值天数',
+                    field: 'day',
+                    minWidth: 100,
+                    templet: function (d) {
+                        return d.day === 0 ? '永久' : d.day + '天';
+                    },
+                },
+                {title: '创建时间', field: 'create_time', minWidth: 200},
+                {
+                    title: '使用时间',
+                    field: 'usage_time',
+                    minWidth: 200,
+                    templet: function (d) {
+                        return d.usage_time ? util.toDateString(d.usage_time * 1000, 'yyyy-MM-dd HH:mm:ss') : '--';
+                    }
+                },
+                {
+                    title: '到期时间',
+                    field: 'expire_time',
+                    minWidth: 200,
+                    templet: function (d) {
+                        return d.expire_time ? util.toDateString(d.expire_time * 1000, 'yyyy-MM-dd HH:mm:ss') : '永久';
+                    }
+                },
+                {
+                    title: '创建用户',
+                    field: 'create_user',
+                    templet: function (d) {
+                        return d.create_user === null ? d.create_name : d.create_user;
+                    },
+                    hide: true,
+                    minWidth: 150
+                },
+                {title: '状态', templet: '#TPL-card-list-table-status', align: 'center', minWidth: 100},
+                {title: '操作', templet: '#TPL-card-list-table-operating', width: 120, align: 'center'}
+            ]],
+            done: function (res, curr, count) {
+                _cur_page = curr;
+            },
+            page: true,
+            where: getWhere()
+        });
+
+        // 监听工具条
+        table.on('tool(' + tableFilter + ')', function (obj) {
+            let data = obj.data;
+            //复制卡密到剪切板
+            if (obj.event === 'copy') {
+                copyToClipboard(data.card_number, function (msg) {
+                    layer.msg(msg, {icon: 1});
+                })
+            } else if (obj.event === 'edit') {
+                let WH = getWH();
+                admin.popup({
+                    title: '卡密编辑( ' + data.card_number + ' )',
+                    area: [WH[0] + 'px', WH[1]],
+                    id: 'LAY-card-edit',
+                    success: function (layero, index) {
+                        template('#card-edit-html', '#LAY-card-edit', data);
+                        layui.laydate.render({
+                            elem: '[name=expire_time]',
+                            type: 'datetime'
+                        });
+                        form.on('submit(card-edit-form-submit)', function (data) {
+                            data = data.field;
+                            saveCardNumberData(data, index);
+                        });
+                    }
+                });
+            }
+        });
+
+        table.on('toolbar(' + tableFilter + ')', function (obj) {
+            if (obj.event === 'create') {
+                window.location.hash = '/card/create';
+                return true;
+            } else if (obj.event === 'del') {
+                let checkedData = table.checkStatus(obj.config.id).data,
+                    id = getId(checkedData);
+                if (!id) {
+                    return false
+                }
+
+                return layer.confirm('确定要删除？', {
+                    btn: ['确定', '取消']
+                }, function () {
+                    let loadMsg = layer.load(0, {shade: false});
+                    $.post("{:url('admin_ajax_card_delete')}", {id: id.join(',')}, function (d) {
+                        layer.close(loadMsg);
+                        if (d.status) {
+                            admin.alert.success('删除成功', {}, function (index) {
+                                layer.close(index);
+                                //执行重载
+                                table.reload(tableFilter, {page: {curr: 1}, where: getWhere()});
+                            });
+                        } else {
+                            admin.alert.error(data.info);
+                        }
+                    }, 'json').fail(function () {
+                        layer.close(loadMsg);
+                        admin.alert.error('系统繁忙, 请稍后再试');
+                    });
+                });
+            }
+        });
+
+        let active = {
+            reload: function () {
+                //执行重载
+                table.reload(tableFilter, {page: {curr: 1}, where: getWhere()});
+            }
+        };
+
+        bindEvent('[lay-active]', function () {
+            var type = $(this).attr('lay-active');
+            typeof active[type] !== 'undefined' && active[type]();
+        });
+
+    })
+</script>

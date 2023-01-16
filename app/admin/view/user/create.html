@@ -1,0 +1,116 @@
+<title>{$site.title} - {$site.name}</title>
+<style>
+    .click_return {
+        margin-left: 5px;
+        margin-top: -4px;
+    }
+
+    .checkbox-37px .layui-form-checkbox {
+        margin-top: 0 !important;
+        height: 37px;
+        line-height: 37px;
+    }
+
+    .checkbox-37px .layui-form-checkbox > i {
+        height: 35px;
+        line-height: 37px;
+    }
+</style>
+<div class="layui-fluid">
+    <div class="layui-card-body" style="padding: 15px;">
+        <form class="layui-form" action="" lay-filter="form-user-create" onsubmit="return false;">
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    创建用户
+                </div>
+                <div class="layui-card-body layui-row layui-col-space10">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">用户名</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="username" lay-verify="required" autocomplete="off"
+                                   class="layui-input">
+                            <div class="layui-form-mid layui-word-aux">用户名由字母、数字组成的3-20位字符串</div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">密码</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="password" lay-verify="required" autocomplete="off"
+                                   class="layui-input">
+                            <div class="layui-form-mid layui-word-aux">密码由字母+数字或字符组成的8-20位字符串</div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">姓名</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="name" lay-verify="required" autocomplete="off"
+                                   class="layui-input" value="无名氏">
+                            <div class="layui-form-mid layui-word-aux"></div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">QQ号</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="qq" autocomplete="off"
+                                   class="layui-input" value="">
+                            <div class="layui-form-mid layui-word-aux">不填写默认为不绑定QQ，用户可自行在用户中心绑定</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-card">
+
+                <div class="layui-card-header">提交</div>
+                <div class="layui-card-body layui-row layui-col-space10">
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button class="layui-btn" lay-submit="" lay-filter="form-user-create-submit">立即提交
+                            </button>
+                            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    layui.use(['admin', 'form', 'laydate'], function () {
+        let $ = layui.$,
+            admin = layui.admin,
+            layer = layui.layer,
+            form = layui.form,
+            laydate = layui.laydate,
+            expire_time_html = '<input type="text" name="expire_time" lay-verify="required" autocomplete="off" class="layui-input" value="0">';
+
+        form.render(null, 'form-user-create');
+
+        /* 监听表单提交 */
+        form.on('submit(form-user-create-submit)', function (data) {
+            data = data.field;
+
+            var index = layer.load(0, {shade: false});
+            $.ajax({
+                url: '{:url('admin_ajax_user_create')}',
+                type: 'post',
+                dataType: 'json',
+                data: data,
+            }).done(function (data) {
+                layer.close(index);
+
+                if (data.status === 1) {
+                    admin.alert.success('创建成功', {}, function (index) {
+                        layer.close(index);
+                        window.history.go(-1);
+                    });
+                } else {
+                    admin.alert.error(data.info);
+                }
+            }).fail(function () {
+                layer.close(index);
+                admin.alert.error('服务器繁忙，请稍后再试！');
+            });
+        });
+    });
+</script>

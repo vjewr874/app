@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <title>{$site.title} - {$site.name}</title>
+    <link href="https://g.onlinfei.com/lyear/css/??bootstrap.min.css,materialdesignicons.min.css,style.min.css"
+          rel="stylesheet">
+    <script type="text/javascript" src="https://g.onlinfei.com/lyear/js/??jquery.min.js,bootstrap.min.js?v1"></script>
+    <script src="https://g.onlinfei.com/layer/layer.js?v1"></script>
+    <script src="__USER__/login/js/login.js"></script>
+    <style>
+        .lyear-wrapper {
+            position: relative;
+        }
+
+        .lyear-login {
+            display: flex !important;
+            min-height: 100vh;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+
+        .login-center {
+            background: #fff;
+            min-width: 38.25rem;
+            padding: 2.14286em 3.57143em;
+            /*border-radius: 5px;*/
+            margin: 2.85714em 0;
+            border-top: solid 7px #33cabb;
+        }
+
+        .login-header {
+            margin-bottom: 1.5rem !important;
+        }
+
+        .login-center .has-feedback.feedback-left .form-control {
+            padding-left: 38px;
+            padding-right: 12px;
+        }
+
+        .login-center .has-feedback.feedback-left .form-control-feedback {
+            left: 0;
+            right: auto;
+            width: 38px;
+            height: 38px;
+            line-height: 38px;
+            z-index: 4;
+            color: #dcdcdc;
+        }
+
+        .login-center .has-feedback.feedback-left.row .form-control-feedback {
+            left: 15px;
+        }
+
+        .qq-login-btn {
+            text-align: center;
+        }
+
+        .qq-login-btn span {
+            font-size: 33px;
+            cursor: pointer;
+            color: #33cabb;
+        }
+
+        .divider {
+            margin-top: 28px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="row lyear-wrapper">
+    <div class="lyear-login">
+        <div class="login-center">
+            <div class="login-header text-center">
+                <img alt="light year admin" src="{$site.data.site_logo}"
+                     style="width: 210px;height: 53px;margin-bottom: 20px;">
+            </div>
+            <form onsubmit="return false;">
+                <div class="form-group has-feedback feedback-left">
+                    <input type="text" placeholder="请输入您的用户名" class="form-control" name="username" id="username"
+                           required lay-verify="required">
+                    <span class="mdi mdi-account form-control-feedback" aria-hidden="true"></span>
+                </div>
+                <div class="form-group has-feedback feedback-left">
+                    <input type="password" placeholder="请输入密码" class="form-control" id="password" name="password"
+                           required lay-verify="required">
+                    <span class="mdi mdi-lock form-control-feedback" aria-hidden="true"></span>
+                </div>
+                <div class="form-group has-feedback feedback-left row">
+                    <div class="col-xs-7">
+                        <input type="text" name="captcha" class="form-control" placeholder="验证码" required
+                               lay-verify="required">
+                        <span class="mdi mdi-check-all form-control-feedback" aria-hidden="true"></span>
+                    </div>
+                    <div class="col-xs-5">
+                        <img src="{:url('user_captcha')}" class="pull-right user_captcha"
+                             style="cursor: pointer;height: 38px;" title="点击刷新" alt="captcha">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="hidden" id="ajax_login" value="{:url('user_ajax_login')}">
+                    <input type="hidden" id="captcha_url" value="{:url('user_captcha')}">
+                    <input type="hidden" id="callback_url" value="{:url('user_index')}">
+                    <input type="hidden" id="getQQLoginUrl"
+                           value="{:url('user_ajax_third',['type' => 'getQQLoginQrcode'])}">
+                    <input type="hidden" id="getQQLoginStatusUrl"
+                           value="{:url('user_ajax_third',['type' => 'getQQLoginStatus'])}">
+                    <button class="btn btn-block btn-primary" type="submit">立即登录
+                    </button>
+                </div>
+            </form>
+            <div class="divider text-uppercase">第三方登录</div>
+            <div>
+                <div class="qq-login-btn">
+                    <span class="mdi mdi-qqchat"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="qq-login-html">
+    <div class="container-fluid" style="text-align: center;margin-top: 54px;">
+        <img src="data:image/png;base64,{{ d.data.img }}" id="qq-qrcode-img" style="display: inline-block;">
+        <p style="margin-top: 13px;" id="qrcode-status">
+            请使用QQ手机版扫描二维码
+        </p>
+    </div>
+</script>
+</body>
+</html>

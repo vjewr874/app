@@ -1,0 +1,271 @@
+<title>{$site.title} - {$site.name}</title>
+<div class="layui-fluid" id="VIEW-list-table">
+    <div class="layui-row layui-col-space10">
+        <div class="layui-col-md10">
+            <div class="layui-card">
+                <div class="layui-card-body nepadmin-table-full layer-event">
+                    <table id="auth-list-table" lay-filter="auth-list-table"></table>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md2">
+            <div class="layui-card">
+                <div class="layui-card-header">筛选数据</div>
+                <div class="layui-card-body">
+                    <script type="text/html" template lay-url="{:url('admin_ajax_get_app')}"
+                            lay-done="layui.form.render();">
+                        <form class="layui-row layui-col-space10 layui-form table-reload-btn">
+                            <div class="layui-col-md12 layui-col-xs6">
+                                <select id="so-appId" lay-search="">
+                                    <option value="">选择应用</option>
+                                    {{# layui.each(d.data, function (index, item){ }}
+                                    <option value="{{ item.id }}">{{ item.name }}</option>
+                                    {{# }); }}
+                                </select>
+                            </div>
+                            <div class="layui-col-md12 layui-col-xs6">
+                                <input type="text" class="layui-input" id="so-authId" placeholder="授权ID">
+                            </div>
+                            <div class="layui-col-md12 layui-col-xs6">
+                                <input type="text" class="layui-input" id="so-createId" placeholder="创建用户ID">
+                            </div>
+                            <div class="layui-col-md12 layui-col-xs6">
+                                <input type="text" class="layui-input" id="so-qq" placeholder="用户QQ">
+                            </div>
+                            <div class="layui-col-md12 layui-col-xs6">
+                                <select id="so-status">
+                                    <option value="">状态</option>
+                                    <option value="1">正常</option>
+                                    <option value="0">封禁</option>
+                                    <option value="2">到期</option>
+                                </select>
+                            </div>
+                            <div class="layui-col-md12 layui-col-xs12">
+                                <div class="layui-row layui-col-space10">
+                                    <div class="layui-col-xs6">
+                                        <div class="layui-btn layui-btn-sm layui-btn-fluid" lay-active="reload">筛选</div>
+                                    </div>
+                                    <div class="layui-col-xs6">
+                                        <button type="reset"
+                                                class="layui-btn layui-btn-sm layui-btn-fluid layui-btn-primary">
+                                            重置
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </script>
+                </div>
+            </div>
+
+<!--            <div class="layui-card nepadmin-font-12">-->
+            <!--                <div class="layui-card-header">-->
+            <!--                    <i class="layui-icon">&#xe78c;</i> 帮助中心-->
+            <!--                </div>-->
+            <!--                <div class="layui-card-body">-->
+            <!--                    <p>商品在出售中列表找不到？</p>-->
+            <!--                    <p class="nepadmin-c-gray">商品售罄库存为0，在已售罄列表中，提醒您该添加库存了。待付款订单也会占据库存，其超时关闭后库存才会释放。</p>-->
+            <!--                    <hr/>-->
+            <!--                    <p>-->
+            <!--                        <a>如何新建／发布商品？</a>-->
+            <!--                    </p>-->
+            <!--                    <p>-->
+            <!--                        <a>如何管理商品？</a>-->
+            <!--                    </p>-->
+            <!--                    <p>-->
+            <!--                        <a>商品如何排序？</a>-->
+            <!--                    </p>-->
+            <!--                    <p>-->
+            <!--                        <a>商品销量找不到对应的订单？</a>-->
+            <!--                    </p>-->
+            <!--                    <p>-->
+            <!--                        <a>商品二维码使用说明</a>-->
+            <!--                    </p>-->
+            <!--                    <p>-->
+            <!--                        <a>商品可以设置用积分兑换吗？</a>-->
+            <!--                    </p>-->
+            <!--                </div>-->
+            <!--            </div>-->
+
+        </div>
+    </div>
+</div>
+<script type="text/html" id="auth-list-toolbar">
+    <div class="layui-btn-container">
+        <div class="layui-btn layui-btn-sm" lay-event="create">添加授权</div>
+        <div class="layui-btn layui-btn-sm layui-btn-primary" lay-event="del">删除</div>
+    </div>
+</script>
+<script type="text/html" id="TPL-auth-list-table-status">
+    {{#
+    var status = [
+    {title:'封禁',color:'red'},
+    {title:'正常',color:'green'},
+    {title:'到期',color:'orange'}
+    ][d.status];
+    }}
+    <span class="layui-badge layui-bg-{{status.color}}">{{ status.title }}</span>
+</script>
+<script type="text/html" id="TPL-auth-list-table-operating">
+    <a lay-event="edit" class="layui-btn layui-btn-xs layui-btn-warm">
+        编辑
+    </a>
+</script>
+<script type="text/html" id="card-edit-html">
+    <div class="layui-form" lay-filter="card-edit-form" style="padding: 20px 0 0 0;">
+        <div class="layui-form-item">
+            <label class="layui-form-label">面值天数</label>
+            <div class="layui-input-block">
+                <input type="text" name="day" value="{{ d.day }}" lay-verify="number"
+                       placeholder="请输入面值天数" autocomplete="off" class="layui-input">
+                <div class="layui-form-mid layui-word-aux">天数为0时代表永久, 建议为0-5000</div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">到期时间</label>
+            <div class="layui-input-block">
+                <input type="text" name="expire_time"
+                       value="{{ d.expire_time ? layui.util.toDateString(d.expire_time * 1000, 'yyyy-MM-dd HH:mm:ss') : 0 }}"
+                       placeholder="卡密到期时间" autocomplete="off"
+                       class="layui-input">
+                <div class="layui-form-mid layui-word-aux">到期时间为0时代表永不失效</div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <div class="layui-footer">
+                    <input type="hidden" name="id" value="{{ d.id }}">
+                    <button class="layui-btn" lay-submit="" lay-filter="card-edit-form-submit">立即提交</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<script>
+    layui.use(['admin', 'table', 'form', 'jquery', 'laydate', 'view', 'util'], function (admin, table, form, $) {
+        let tableFilter = 'auth-list-table',
+            _cur_page = 0,
+            util = layui.util,
+            getWhere = function () {
+                return {
+                    soAppId: $('#so-appId').val(),
+                    soAuthId: $('#so-authId').val(),
+                    soCreateId: $('#so-createId').val(),
+                    soQq: $('#so-qq').val(),
+                    status: $('#so-status').val()
+                }
+            }, getId = function (data) {
+                if (data.length < 1) {
+                    admin.alert.error('请先选择数据');
+                    return false;
+                }
+                let id = new Array();
+                $.each(data, function (index, val) {
+                    id.push(val.id);
+                });
+                return id
+            };
+
+        form.render();
+        table.render({
+            elem: '#' + tableFilter,
+            url: '{:url('admin_ajax_get_auth_list')}',
+            toolbar: '#auth-list-toolbar',
+            title: '授权列表',
+            height: 'full-165',
+            cols: [[
+                {type: 'checkbox'},
+                {title: 'ID', field: 'id', hide: true},
+                {title: '应用ID', field: 'appid', hide: true},
+                {
+                    title: '应用名称',
+                    field: 'appName',
+                    templet: function (d) {
+                        try {
+                            return d.get_app_info.name + ' (ID: ' + d.get_app_info.id + ')';
+                        } catch (e) {
+                            return '--';
+                        }
+                    },
+                    minWidth: 170
+                },
+                {title: '授权ID', field: 'auth_id', minWidth: 150, hide: false},
+                {title: '授权秘钥', field: 'auth_key', minWidth: 260, hide: true},
+                {title: '授权关键', field: 'auth_content', minWidth: 200},
+                {title: 'QQ', field: 'qq', minWidth: 120},
+                {title: '创建用户', field: 'create_name', minWidth: 200},
+                {title: '创建时间', field: 'create_time', minWidth: 190},
+                {
+                    title: '到期时间',
+                    field: 'expire_time',
+                    minWidth: 190,
+                    templet: function (d) {
+                        return d.expire_time ? util.toDateString(d.expire_time * 1000, 'yyyy-MM-dd HH:mm:ss') : '永久';
+                    }
+                },
+                {title: '状态', templet: '#TPL-auth-list-table-status', align: 'center', minWidth: 100},
+                {title: '操作', templet: '#TPL-auth-list-table-operating', width: 120, align: 'center'}
+            ]],
+            done: function (res, curr, count) {
+                _cur_page = curr;
+            },
+            page: true,
+            where: getWhere()
+        });
+
+        // 监听工具条
+        table.on('tool(' + tableFilter + ')', function (obj) {
+            let data = obj.data;
+
+            if (obj.event === 'edit') {
+                window.location.hash = '/auth/edit/' + data.id;
+            }
+        });
+
+        table.on('toolbar(' + tableFilter + ')', function (obj) {
+            if (obj.event === 'create') {
+                window.location.hash = '/auth/create';
+                return true;
+            } else if (obj.event === 'del') {
+                let checkedData = table.checkStatus(obj.config.id).data,
+                    id = getId(checkedData);
+                if (!id) {
+                    return false
+                }
+
+                return layer.confirm('确定要删除？', {
+                    btn: ['确定', '取消']
+                }, function () {
+                    let loadMsg = layer.load(0, {shade: false});
+                    $.post("{:url('admin_ajax_auth_delete')}", {id: id.join(',')}, function (d) {
+                        layer.close(loadMsg);
+                        if (d.status) {
+                            admin.alert.success('删除成功', {}, function (index) {
+                                layer.close(index);
+                                //执行重载
+                                table.reload(tableFilter, {page: {curr: 1}, where: getWhere()});
+                            });
+                        } else {
+                            admin.alert.error(data.info);
+                        }
+                    }, 'json').fail(function () {
+                        layer.close(loadMsg);
+                        admin.alert.error('系统繁忙, 请稍后再试');
+                    });
+                });
+            }
+        });
+
+        let active = {
+            reload: function () {
+                //执行重载
+                table.reload(tableFilter, {page: {curr: 1}, where: getWhere()});
+            }
+        };
+
+        bindEvent('[lay-active]', function () {
+            var type = $(this).attr('lay-active');
+            typeof active[type] !== 'undefined' && active[type]();
+        });
+    })
+</script>

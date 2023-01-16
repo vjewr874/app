@@ -1,0 +1,191 @@
+<title>{$site.title} - {$site.name}</title>
+
+<style>
+    .click_return {
+        margin-left: 5px;
+        margin-top: -4px;
+    }
+</style>
+<div class="layui-fluid">
+    <div class="layui-card-body" style="padding: 15px;">
+        <form class="layui-form" action="" lay-filter="form-app-create" wid100 onsubmit="return false;">
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    应用创建
+                </div>
+                <div class="layui-card-body layui-row layui-col-space10">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">应用名称</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="name" lay-verify="required" autocomplete="off"
+                                   class="layui-input" value="">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">作者名称</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="author" lay-verify="required" autocomplete="off"
+                                   class="layui-input" value="">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">团队名称</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="team_name" lay-verify="required" autocomplete="off"
+                                   class="layui-input" value="">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">客服QQ</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="qq" lay-verify="qq" autocomplete="off"
+                                   class="layui-input" value="">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">官方网址</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="url" lay-verify="required" autocomplete="off"
+                                   class="layui-input" value="">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">启用</label>
+                        <div class="layui-input-block">
+                            <input type="checkbox" name="status" lay-skin="switch"
+                                   lay-filter="form-group-switch" lay-text="ON|OFF" checked="">
+                            <div class="layui-unselect layui-form-switch layui-form-onswitch" lay-skin="_switch">
+                                <em>ON</em><i></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    授权配置
+                </div>
+                <div class="layui-card-body layui-row layui-col-space10">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">授权验证</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="auth_verify_reg" autocomplete="off"
+                                   class="layui-input" value="">
+                            <div class="layui-form-mid layui-word-aux">授权关键正则表达式，空为不验证</div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">授权文件</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="auth_file_name" autocomplete="off"
+                                   class="layui-input" value="/config/auth.php">
+                            <div class="layui-form-mid layui-word-aux">程序授权信息文件保存地址，例如: /config/auth.php</div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">文件编码</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="auth_file_coding" autocomplete="off"
+                                   class="layui-input" value="utf-8">
+                            <div class="layui-form-mid layui-word-aux">文件写入编码, 默认UTF-8</div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">文件内容</label>
+                        <div class="layui-input-block">
+                            <textarea name="auth_file_content" class="layui-textarea" style="height: 70px;">&lt;?php
+return [
+    'number' =&gt; '[v.id]',
+    'version' =&gt; '[v.version]',
+    'auth_id' =&gt; '[auth.auth_id]',
+    'auth_key' =&gt; '[auth.auth_key]',
+    'teamName' =&gt; '[app.team_name]',
+    'author' =&gt; '[app.author]',
+    'programName' =&gt; '[app.name]',
+    'qq' =&gt; '[app.qq]',
+    'url' =&gt; '[app.url]',
+];</textarea>
+                            <div class="layui-form-mid layui-word-aux">
+                                <p>
+                                    自定义授权文件内容
+                                </p>
+                                <p>
+                                    应用变量[app.name][app.author][app.team_name][app.qq][app.url][app.create_time]
+                                </p>
+                                <p>
+                                    版本变量[v.version][v.content]
+                                </p>
+                                <p>
+                                    授权变量[auth.appid][auth.auth_id][auth.auth_key][auth.auth_content][auth.create_time]
+                                </p>
+                                <p>
+                                    授权变量[auth.qq][auth.expire_time]
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-card">
+                <div class="layui-card-header">提交</div>
+                <div class="layui-card-body layui-row layui-col-space10">
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button class="layui-btn" lay-submit="" lay-filter="form-app-create-submit">立即提交</button>
+                            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    layui.use(['admin', 'form', 'laydate'], function () {
+        var $ = layui.$,
+            admin = layui.admin,
+            layer = layui.layer,
+            form = layui.form;
+
+        form.render(null, 'form-app-create');
+
+        form.verify({
+            qq: function (value, item) {
+                if (!new RegExp("^[0-9]{5,10}$").test(value)) {
+                    return 'QQ号格式错误';
+                }
+            }
+        });
+
+        /* 监听表单提交 */
+        form.on('submit(form-app-create-submit)', function (data) {
+            data = data.field;
+            data.status = data.status === 'on' ? 1 : 0;
+
+            var index = layer.load(0, {shade: false});
+            $.ajax({
+                url: '{:url('admin_ajax_app_create')}',
+                type: 'post',
+                dataType: 'json',
+                data: data,
+            }).done(function (data) {
+                layer.close(index);
+
+                if (data.status === 1) {
+                    admin.alert.success('创建成功', {}, function (index) {
+                        layer.close(index);
+                        window.location.hash = '/app/index'
+                    });
+                } else {
+                    admin.alert.error(data.info);
+                }
+            }).fail(function () {
+                layer.close(index);
+                admin.alert.error('服务器繁忙，请稍后再试！');
+            });
+        });
+        $(document).on('click', '.click_return', function () {
+            window.location.hash = '/app/index'
+        });
+    });
+</script>

@@ -1,0 +1,410 @@
+<title>{$site.title} - {$site.name}</title>
+<style>
+    .update-view-title {
+        color: #3e4149;
+        font-size: 15px;
+        margin-right: 7px;
+    }
+
+    .update-view-content {
+        color: #030c10;
+        font-size: 13px;
+    }
+
+    .update-view {
+        margin-bottom: 5px;
+    }
+
+    .update-btn {
+        text-align: center;
+        margin-top: 15px;
+    }
+</style>
+
+<div class="layui-breadcrumb" style="background: #fff;visibility: initial;padding: 14px 10px;">
+    <a><cite class="admin_hello">欢迎，管理员：{:config('admin_info.name')}</cite></a>
+    <a style="float: right;"><cite class="body_time_txt">--</cite></a>
+</div>
+
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-lg8">
+            <div class="layui-row layui-col-space15">
+                <script type="text/html" template="" lay-url="{:url('admin_get_console_info')}">
+                    <div class="layui-col-sm4">
+                        <div class="nepadmin-linecard">
+                            <p class="nepadmin-linecard-title">应用数量</p>
+                            <span class="nepadmin-linecard-text">{{ d.data.appNumber }}</span>
+                            <span class="nepadmin-ignore">个</span>
+                        </div>
+                    </div>
+                    <div class="layui-col-sm4">
+                        <div class="nepadmin-linecard nepadmin-br-green">
+                            <p class="nepadmin-linecard-title">授权数量</p>
+                            <span class="nepadmin-linecard-text">{{ d.data.authNumber }}</span>
+                            <span class="nepadmin-ignore">个</span>
+                        </div>
+                    </div>
+                    <div class="layui-col-sm4">
+                        <div class="nepadmin-linecard nepadmin-br-red">
+                            <p class="nepadmin-linecard-title">今日新增授权</p>
+                            <span class="nepadmin-linecard-text">{{ d.data.authDayNumber }}</span>
+                            <span class="nepadmin-ignore">个</span>
+                        </div>
+                    </div>
+                    <div class="layui-col-sm4">
+                        <div class="nepadmin-linecard">
+                            <p class="nepadmin-linecard-title">代理数量</p>
+                            <span class="nepadmin-linecard-text">{{ d.data.agentNumber }}</span>
+                            <span class="nepadmin-ignore">个</span>
+                        </div>
+                    </div>
+                    <div class="layui-col-sm4">
+                        <div class="nepadmin-linecard nepadmin-br-green">
+                            <p class="nepadmin-linecard-title">卡密数量</p>
+                            <span class="nepadmin-linecard-text">{{ d.data.cardNumber }}</span>
+                            <span class="nepadmin-ignore">张</span>
+                        </div>
+                    </div>
+                    <div class="layui-col-sm4">
+                        <div class="nepadmin-linecard nepadmin-br-red">
+                            <p class="nepadmin-linecard-title">
+                                已使用卡密
+                            </p>
+                            <span class="nepadmin-linecard-text">{{ d.data.cardUseNumber }}</span>
+                            <span class="nepadmin-ignore">张</span>
+                        </div>
+                    </div>
+                    <div class="layui-col-sm12">
+                        <div class="nepadmin-linecard nepadmin-br-gray">
+                            <p class="nepadmin-linecard-title">盗版数量</p>
+                            <span class="nepadmin-linecard-text">{{ d.data.notAuthNumber }}</span>
+                            <span class="nepadmin-ignore">个</span>
+                        </div>
+                    </div>
+                </script>
+                <div class="layui-col-xs12">
+                    <div class="layui-row layui-col-space15">
+                        <div class="layui-col-sm12">
+                            <div class="layui-card">
+                                <div class="layui-card-header">快捷操作</div>
+                                <div class="layui-card-body" style="height: 200px;">
+                                    <div class="layui-row" style="margin-top:15px;">
+                                        <div class="layui-col-xs3 nepadmin-grid"
+                                             lay-href="{:adminView('admin_app_index')}">
+                                            <span class="layui-icon layui-icon-app"></span>
+                                            <p>应用列表</p>
+                                        </div>
+                                        <div class="layui-col-xs3 nepadmin-grid"
+                                             lay-href="{:adminView('admin_user_index')}">
+                                            <span class="layui-icon layui-icon-username"></span>
+                                            <p>用户列表</p>
+                                        </div>
+                                        <div class="layui-col-xs3 nepadmin-grid"
+                                             lay-href="{:adminView('admin_card_index')}">
+                                            <span class="layui-icon layui-icon-card-password"></span>
+                                            <p>卡密列表</p>
+                                        </div>
+                                        <div class="layui-col-xs3 nepadmin-grid"
+                                             lay-href="{:adminView('admin_auth_index')}">
+                                            <span class="layui-icon layui-icon-auz"></span>
+                                            <p>授权列表</p>
+                                        </div>
+                                        <div class="layui-col-xs3 nepadmin-grid"
+                                             lay-href="{:adminView('admin_app_create')}">
+                                            <span class="layui-icon layui-icon-add-circle-fine"></span>
+                                            <p>创建应用</p>
+                                        </div>
+                                        <div class="layui-col-xs3 nepadmin-grid"
+                                             lay-href="{:adminView('admin_user_create')}">
+                                            <span class="layui-icon layui-icon-add-circle-fine"></span>
+                                            <p>添加用户</p>
+                                        </div>
+                                        <div class="layui-col-xs3 nepadmin-grid"
+                                             lay-href="{:adminView('admin_card_create')}">
+                                            <span class="layui-icon layui-icon-add-circle-fine"></span>
+                                            <p>生成卡密</p>
+                                        </div>
+                                        <div class="layui-col-xs3 nepadmin-grid"
+                                             lay-href="{:adminView('admin_auth_create')}">
+                                            <span class="layui-icon layui-icon-add-circle-fine"></span>
+                                            <p>添加授权</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-xs12">
+                    <div class="layui-row layui-col-space15" id="webSiteInfo"></div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-lg4" id="versionAndTeamInfo"></div>
+        <div class="layui-col-lg4">
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    <i class="layui-icon layui-icon-notification-fill"></i> 公告动态
+                </div>
+                <div class="nepadmin-cell">
+                    <div class="nepadmin-cell-title">
+                        xxxx
+                    </div>
+                    <div class="nepadmin-cell-extra">09月14日 10:23:21</div>
+                </div>
+                <div class="nepadmin-cell">
+                    <div class="nepadmin-cell-title">xxxx</div>
+                    <div class="nepadmin-cell-extra">09月14日 12:11:21</div>
+                </div>
+                <div class="nepadmin-cell">
+                    <div class="nepadmin-cell-title">xxxx</div>
+                    <div class="nepadmin-cell-extra">09月14日 13:32:21</div>
+                </div>
+                <div class="nepadmin-cell">
+                    <div class="nepadmin-cell-title">xxxx</div>
+                    <div class="nepadmin-cell-extra">08月10日 16:01:02</div>
+                </div>
+                <div class="nepadmin-cell">
+                    <div class="nepadmin-cell-title">xxxx</div>
+                    <div class="nepadmin-cell-extra">08月10日 15:53:23</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="versionAndTeamInfo-html">
+    <div class="layui-card">
+        <div class="layui-card-header">版本信息</div>
+        <div class="layui-card-body">
+            <table class="layui-table">
+                <colgroup>
+                    <col width="100"/>
+                    <col/>
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td>当前版本</td>
+                    <td>v {{d.version}}</td>
+                </tr>
+                <tr>
+                    <td>程序名称</td>
+                    <td>
+                        {{d.programName}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>系统更新</td>
+                    <td id="source-code-version">--</td>
+                </tr>
+                <tr>
+                    <td>版本所有</td>
+                    <td>正版</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="layui-card">
+        <div class="layui-card-header">程序来源</div>
+        <div class="layui-card-body">
+            <table class="layui-table">
+                <colgroup>
+                    <col width="100"/>
+                    <col/>
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td>&#20159;&#30721;&#37239;&#31449;</td>
+                    <td><a href="&#104;&#116;&#116;&#112;&#115;&#58;&#47;&#47;&#119;&#119;&#119;&#46;&#121;&#109;&#107;&#117;&#122;&#104;&#97;&#110;&#46;&#99;&#111;&#109;" target="_blank">&#119;&#119;&#119;&#46;&#121;&#109;&#107;&#117;&#122;&#104;&#97;&#110;&#46;&#99;&#111;&#109;</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</script>
+<script type="text/html" id="webSiteInfo-html">
+    <div class="layui-col-sm6">
+        <div class="layui-card">
+            <div class="layui-card-header">系统信息</div>
+            <div class="layui-card-body">
+                <table class="layui-table">
+                    <colgroup>
+                        <col width="150"/>
+                        <col/>
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td>服务器操作系统</td>
+                        <td>{{d.os}}</td>
+                    </tr>
+                    <tr>
+                        <td>服务器环境</td>
+                        <td>
+                            {{d.software}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>网站目录</td>
+                        <td>{{d.root}}</td>
+                    </tr>
+                    <tr>
+                        <td>文件上传限制</td>
+                        <td>{{d.fileUploadSize}}</td>
+                    </tr>
+                    <tr>
+                        <td>POST限制</td>
+                        <td>{{d.postMaxSize}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-sm6">
+        <div class="layui-card">
+            <div class="layui-card-header">系统信息</div>
+            <div class="layui-card-body">
+                <table class="layui-table">
+                    <colgroup>
+                        <col width="150"/>
+                        <col/>
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td>服务器域名/IP</td>
+                        <td>{{d.domian}}</td>
+                    </tr>
+                    <tr>
+                        <td>PHP 版本</td>
+                        <td>
+                            {{d.phpVersion}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>服务器语言</td>
+                        <td>{{d.serverLanguage}}</td>
+                    </tr>
+                    <tr>
+                        <td>最大占用内存</td>
+                        <td>{{d.memoryLimit}}</td>
+                    </tr>
+                    <tr>
+                        <td>最大执行时间</td>
+                        <td>{{d.maxExecutionTime}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</script>
+<script>
+    layui.use(['admin'],
+        function (admin) {
+            let $ = layui.jquery,
+                showDateText = function () {
+                    let myDate = new Date;
+                    let year = myDate.getFullYear(); //获取当前年
+                    let mon = myDate.getMonth() + 1; //获取当前月
+                    let date = myDate.getDate(); //获取当前日
+                    let h = myDate.getHours();//获取当前小时数(0-23)
+                    let m = myDate.getMinutes();//获取当前分钟数(0-59)
+                    let s = myDate.getSeconds();//获取当前秒
+                    let week = myDate.getDay();
+                    let weeks = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
+                    $(".body_time_txt").text(year + "年" + mon + "月" + date + "日 " + h + "时" + m + "分" + s + "秒 " + weeks[week]);
+                },
+                updateInfo = {},
+                getUpdateInfo = function () {
+                    $.get("{:url('admin_ajax_get_update_info')}", function (data) {
+                        if (data.status !== 1) {
+                            return admin.alert.error(data.info, {title: '更新检测错误'});
+                        }
+
+                        if (data.data.length !== 0) {
+                            data = data.data[0];
+                            updateInfo = data;
+
+                            setTimeout(function () {
+                                getCookie('update_' + data.version) == null && $('[data-event=update_view]').trigger('click');
+                                setCookie('update_' + data.version, 1);
+                            }, 100);
+                            $('#source-code-version').html('<span style="color: red;">有新版本 V ' + data.version +
+                                '</span><a class="layui-btn layui-btn-xs layui-btn-danger" style="margin-left: 5px;" data-event="update_view">查看</a>');
+                        } else {
+                            $('#source-code-version').text('已经是最新');
+                        }
+                    }, 'json');
+                }, getWebsiteInfo = function () {
+                    $.get("{:url('admin_ajax_get_website_info')}", function (data) {
+                        if (data.status !== 1) {
+                            return layer.msg('获取站点信息失败', {time: 1000});
+                        }
+                        getUpdateInfo();
+                        template('#versionAndTeamInfo-html', '#versionAndTeamInfo', data.data);
+                        template('#webSiteInfo-html', '#webSiteInfo', data.data);
+                    }, 'json');
+                };
+
+            showDateText();
+            getWebsiteInfo();
+            setInterval(showDateText, 1000);
+
+            bindEvent('[data-event=update_view]', function () {
+                let WH = getWH();
+                admin.popup({
+                    title: '新版详情',
+                    area: [WH[0] + 'px', WH[1]],
+                    id: 'LAY-update-view',
+                    success: function (layero, index) {
+                        template('#update-view-html', '#LAY-update-view', updateInfo);
+                    }
+                });
+            });
+
+            bindEvent('[data-event=update]', function () {
+                let loadMsg = layer.load();
+                $.get("{:url('admin_ajax_self_update')}", {number: updateInfo.id}, function (res) {
+                    layer.close(loadMsg);
+                    if (res.status === 1) {
+                        admin.alert.success('更新成功', {}, function () {
+                            window.location.reload();
+                        });
+                    } else {
+                        admin.alert.error(res.info, {});
+                    }
+                }, 'json').fail(function () {
+                    layer.close(loadMsg);
+                    admin.alert.error('系统繁忙, 请稍后再试');
+                });
+            });
+        }
+    )
+</script>
+<script type="text/html" id="update-view-html">
+    <blockquote class="layui-elem-quote">
+        <p class="update-view">
+            <span class="update-view-title">程序：</span>
+            <span class="update-view-content">{{ d.name || '无'  }}</span>
+        </p>
+        <p class="update-view">
+            <span class="update-view-title">版本：</span>
+            <span class="update-view-content">V {{ d.version || '无'  }}</span>
+        </p>
+        <p class="update-view">
+            <span class="update-view-title">发布时间：</span>
+            <span class="update-view-content">{{ d.release_time || '无' }}</span>
+        </p>
+        <p class="update-view">
+            <span class="update-view-title">更新内容：</span>
+        </p>
+        <p class="update-view" style="margin-bottom: 0px;">
+            {{ d.content || '无' }}
+        </p>
+    </blockquote>
+    <div class="update-btn">
+        <button class="layui-btn layui-btn-normal" data-event="update">更新</button>
+        <button class="layui-btn layui-btn-danger" onclick="layer.closeAll();">取消</button>
+    </div>
+</script>

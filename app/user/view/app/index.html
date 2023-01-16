@@ -1,0 +1,52 @@
+{extend name="public/base" /}
+
+{block name="main"}
+<div class="container-fluid" menu="app-index">
+    <div class="container-fluid" id="app-body">
+
+    </div>
+</div>
+<style>
+    .app-list > blockquote > p {
+        font-size: 14px;
+    }
+</style>
+<script type="text/html" id="app-body-html">
+    {{# $.each(d, function (index, item){ }}
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h4>
+                    {{ item.name }}
+                </h4>
+            </div>
+            <div class="card-body app-list">
+                <blockquote class="blockquote blockquote-success">
+                    <p>作者：{{ item.author }}</p>
+                    <p>团队：{{ item.team_name }}</p>
+                    <p>最新版本：V {{ item.get_version.version }}</p>
+                    <p>发布时间：{{ item.get_version.release_time }}</p>
+                    <footer>{{ item.get_version.content }}</footer>
+                </blockquote>
+            </div>
+        </div>
+    </div>
+    {{# }); }}
+    {{# if(d.length === 0) { }}
+    <div class="text-center">
+        <span style="font-size: 28px;color: #faa64b;">
+            <i class="mdi mdi-close-circle-outline"></i>
+            未获取到相关信息
+        </span>
+    </div>
+    {{# } }}
+</script>
+<script>
+    layui.use(['form', 'laytpl', 'util'], function (form, laytpl, util) {
+        helper.__getAppList(helper.loadMsg({data: {type: 'view'}}), function (res) {
+            // 模板渲染
+            template('#app-body-html', '#app-body', res.data);
+        });
+    });
+</script>
+{/block}
